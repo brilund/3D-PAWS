@@ -54,8 +54,8 @@ Created on Thu Jun  4 16:05:12 2020
 #           a)... same plot
 #           b)... separate plots, but within same figure
 #    5. Add additional automated plotting options...
-#           a) daily
-#           b) monthly
+#           a) daily - DONE!
+#           b) monthly - DONE!
 #           c) plot_all (plots all variables from the specified sensor; this
 #              will mean that ALL figures get saved to the specified directory)
 #    6. Consider expanding the "averaging" or smoothing option to also work
