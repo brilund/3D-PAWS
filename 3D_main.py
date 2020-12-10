@@ -146,15 +146,15 @@ import plotter as pltr
 
 #set this to the name of the sensor from which you want to plot (NOT case
 #    sensitive)
-sensor = "ANEMOMETER"
+sensor = "BMP280"
 
 #set the 'directory' variable to the absolute path where your data are stored;
 #    don't forget the trailing forward slash!
-directory = "/Users/blund/Documents/3D-PAWS/Data/3DPAWS_FrederickCO/data/wind_speed/"
+directory = "/Users/blund/Documents/3D-PAWS/Data/3DPAWS_FrederickCO/data/bmp/"
 
 #specify the FULL file path to the directory in which to save your figures;
 #    don't forget to include the trailing forward slash!
-save_dir = "/Users/blund/Documents/Python_Scripts/Figures/Frederick_CO/SI1145/"
+save_dir = "/Users/blund/Documents/Python_Scripts/Figures/Frederick_CO/BMP280/"
 
 #set the wildcard option; to read in EVERY file within the directory you
 #    specified above in 'directory', set 'wildcard' to "*"; you may specify
@@ -168,7 +168,7 @@ site_ID = "Frederick_CO"
 
 #change this to the name of the variable you want to plot; a list of
 #    acceptable options can be found in the "How to Use:" section above
-var_name = "vis"
+var_name = "temp_C"
 
 #change this to the units you want to plot; a list of acceptable options can
 #    be found in the "How to Use:" section above*
@@ -300,12 +300,24 @@ if mintime != 0 or maxtime != df.index[-1]:
 
 
 ##############################################################################
+##########################    QUALITY ASSURANCE    ###########################
+##############################################################################
+
+# #call the quality assurance function
+# call_QA = qa(sensor, mintime, maxtime, df)
+
+
+
+##############################################################################
 ###########################    DATA PROCESSING    ############################
 ##############################################################################
 
 #create a 'time' variable from the 'time' column in the DataFrame as a
 #   DatetimeIndex array; this will be used for other calculations/test below
 time = pd.to_datetime(np.array(df.time))
+
+''' Don't compute analytics on averaged / smoothed data, and don't smooth
+    analytic products '''
 
 #right now, the anemometer is the only sensor that has the ability for
 #    smoothing/averaging

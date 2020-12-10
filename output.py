@@ -94,33 +94,6 @@ import sys
 ################################   OUTPUT   ##################################
 ##############################################################################
 
-'are the bmp specs different between the different models?'
-#these are taken from the sensor manuals themselves
-#bmp specs
-bmp_t_min = -40.
-bmp_t_max = 85.
-bmp_p_min = 300.
-bmp_p_max = 1100.
-
-#htu21D specs
-htu_t_min = -40.
-htu_t_max = 125.
-htu_rh_min = 0.
-htu_rh_max = 100.
-
-#mcp9808 specs
-mcp_t_min = -20.
-mcp_t_max = 100.
-
-#si1145 specs
-
-#tipping bucket specs
-
-#anemometer specs
-
-#wind vane specs
-
-
 ######################### Uptime within Time Frame ########################### 
 
 #this can only be called AFTER the 'time_checker.py' where 'mintime' and
@@ -158,9 +131,10 @@ def timeframe_uptime(mintime, maxtime, df):
 #standard deviation (running for 10-min, 30-min, 60-min; static for 1-day, 30-day, 1-year, diurnally, seasonally)
 #uptime within each of those timescales for running and static periods (running for
 #    10-min, 30-min, 60-min; static for 1-day, 30-day, 1-year, diurnally, seasonally)
-#standard deviation after removal of suspicious data points
-
-
+#standard deviation after removal of suspicious data points        
         
+ 
+if __name__ == "__main__":
+    quality_assurance()
         
         

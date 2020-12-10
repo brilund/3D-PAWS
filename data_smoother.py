@@ -108,7 +108,8 @@ def smoothing(averaged, avg_window, df):
         #    user-defined averaging window, so that the value computed over that
         #    duration is now valid for the beginning of the time frame (i.e. a 10-
         #    min running average beginning at 08:00 will be valid [plotted] for
-        #    [at] 08:00)
+        #    [at] 08:00); the iloc[:,1] tells it to only go this for all values
+        #    in the second column (identified by the first index)
         print("Plotting %s-min running averaged data..." % avg_window)
         df['windspd_avg'] = df.iloc[:,1].rolling(window=avg_window).mean().shift(-(avg_window-1))
         
