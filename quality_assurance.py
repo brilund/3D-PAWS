@@ -10,7 +10,7 @@ Created on Thu Dec 10 15:20:44 2020
 #############################   LIMITS TEST   ################################
 ##############################################################################
 
-def quality_assurance(sensor, mintime, maxtime, df):
+def limits_test(sensor, mintime, maxtime, df):
 
     #performing simple limits test on the data to verify that measurements are
     #    within the sensor's specifications according to the sensor's manual
@@ -70,35 +70,56 @@ def quality_assurance(sensor, mintime, maxtime, df):
     
     ############################# HTU21D Sensor ##############################
     
+    if sensor.lower() == "htu21d":
+    
     #temp_F must be flagged only if temp_C is flagged
     
     
     ############################# MCP9808 Sensor #############################
+    
+    if sensor.lower() == "mcp9808":
     
     #temp_F must be flagged only if temp_C is flagged
     
     
     ############################# SI1145 Sensor ##############################
     
+    if sensor.lower() == "si1145":
+    
     #
     
     
     ############################### Anemometer ###############################
+    
+    if sensor.lower() == "anemometer":
     
     #
     
     
     ############################### Wind Vane ################################
     
+    if sensor.lower() == "wind_vane":
+    
     #
     
     
     ############################ Tipping Bucket ##############################
     
+    if sensor.lower() == "rain":
+    
     #
     
     
+    ##########################################################################
     
+    print("------------------------------------------------------------------")
+    
+    #
+    # return averaged
+
+   
+if __name__ == "__main__":
+    limits_test()
     
     
     
