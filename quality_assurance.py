@@ -6,6 +6,32 @@ Created on Thu Dec 10 15:20:44 2020
 @author: blund
 """
 
+
+
+#the naming convention for the columns added to the data frame are as
+#    follows...
+#First letter (lowercase) represents the variable being tesed. It is
+#    followed by an underscore and two capital letters: LC, IC, TC, CC.
+#    LC = Limits Check
+#    IC = Internal Check
+#    TC = Temporal Check
+#    CC = Climatological Check
+#For example, "t_LC" refers to the column(s) representing temperatures
+#    flagged during the LIMITS CHECK. Only variables that are directly
+#    measured from the sensor itself are checked during these procedures.
+#    Variables that are computed using the measured variables (e.g.
+#    temperature in Fahrenheit) are NOT checked, but are flagged if any
+#    one of the measured variables used to calculate it are flagged.
+
+##############################################################################
+#########################    IMPORTING MODULES    ############################
+##############################################################################
+
+import numpy as np
+import pandas as pd
+
+
+
 ##############################################################################
 ##############################   LIMITS TEST   ###############################
 ##############################################################################
@@ -160,28 +186,105 @@ def limits_test(sensor, mintime, maxtime, df):
     
     if sensor.lower() == "si1145":
     
-    #
+        #generate separate arrays of zeros the same length as the dataframe;
+        #    these will each serve as the columns of flags in the dataframe for
+        #    their respective measured variables
+        si_LC = np.zeros(len(df)) # temperature
+        
+        #find the indices in the dataframe for each measured variable such that
+        #    the value is outside the specifications for the given variable
+        si_idx = df.index[(df.temp_C < si_min) & (df.temp_C > si_max)]
+        
+        #for the indices in the dataframe of values that are outside the
+        #    specifications, change the values at the same indices in the zero
+        #    arrays to ones (these indicate the values out of range)
+        si_LC[si_idx] = 1
+        
+        #add new columns in the dataframe indicating with 1s where the
+        #    temperature, pressure, altitude, and relative humidity (for BME
+        #    only) records are flagged for exceeding the limits test, 0s for
+        #    the opposite
+        df.insert(5,"si_LC",si_LC)
     
     
     ############################### Anemometer ###############################
     
     if sensor.lower() == "anemometer":
     
-    #
+        #generate separate arrays of zeros the same length as the dataframe;
+        #    these will each serve as the columns of flags in the dataframe for
+        #    their respective measured variables
+        ws_LC = np.zeros(len(df)) # temperature
+        
+        #find the indices in the dataframe for each measured variable such that
+        #    the value is outside the specifications for the given variable
+        ws_idx = df.index[(df.wind_speed < ws_min) & (df.wind_speed > ws_max)]
+        
+        #for the indices in the dataframe of values that are outside the
+        #    specifications, change the values at the same indices in the zero
+        #    arrays to ones (these indicate the values out of range)
+        ws_LC[ws_idx] = 1
+        
+        #add new columns in the dataframe indicating with 1s where the
+        #    temperature, pressure, altitude, and relative humidity (for BME
+        #    only) records are flagged for exceeding the limits test, 0s for
+        #    the opposite
+        df.insert(2,"ws_LC",ws_LC)
     
     
     ############################### Wind Vane ################################
     
     if sensor.lower() == "wind_vane":
     
-    #
+        #generate separate arrays of zeros the same length as the dataframe;
+        #    these will each serve as the columns of flags in the dataframe for
+        #    their respective measured variables
+        wd_LC = np.zeros(len(df)) # temperature
+        
+        #find the indices in the dataframe for each measured variable such that
+        #    the value is outside the specifications for the given variable
+        wd_idx = df.index[(df.wind_dir < wd_min) & (df.wind_dir > wd_max)]
+        
+        #for the indices in the dataframe of values that are outside the
+        #    specifications, change the values at the same indices in the zero
+        #    arrays to ones (these indicate the values out of range)
+        wd_LC[wd_idx] = 1
+        
+        #add new columns in the dataframe indicating with 1s where the
+        #    temperature, pressure, altitude, and relative humidity (for BME
+        #    only) records are flagged for exceeding the limits test, 0s for
+        #    the opposite
+        df.insert(2,"wd_LC",wd_LC)
     
     
     ############################ Tipping Bucket ##############################
     
     if sensor.lower() == "rain":
+        
+        #there are no real "limits", per se, to how many tips can occur; there
+        #    are physical contraints climatologically speaking but the bucket
+        #    can tip and many times as it wants, technically. Perhaps a limits
+        #    test from a mechanical perspective is not the best approach
     
-    #
+        #generate separate arrays of zeros the same length as the dataframe;
+        #    these will each serve as the columns of flags in the dataframe for
+        #    their respective measured variables
+        tb_LC = np.zeros(len(df)) # temperature
+        
+        #find the indices in the dataframe for each measured variable such that
+        #    the value is outside the specifications for the given variable
+        tb_idx = df.index[(df.rain < tb_min) & (df.rain > tb_max)]
+        
+        #for the indices in the dataframe of values that are outside the
+        #    specifications, change the values at the same indices in the zero
+        #    arrays to ones (these indicate the values out of range)
+        tb_LC[tb_idx] = 1
+        
+        #add new columns in the dataframe indicating with 1s where the
+        #    temperature, pressure, altitude, and relative humidity (for BME
+        #    only) records are flagged for exceeding the limits test, 0s for
+        #    the opposite
+        df.insert(2,"tb_LC",tb_LC)
     
     
     ##########################################################################
@@ -189,28 +292,60 @@ def limits_test(sensor, mintime, maxtime, df):
     print("------------------------------------------------------------------")
     
     #
-    # return df
+    return df
     
     
 
-##############################################################################
-#######################   INTERNAL CONSISTENCY TEST   ########################
-##############################################################################
+# ##############################################################################
+# #######################   INTERNAL CONSISTENCY TEST   ########################
+# ##############################################################################
 
-def IC_test(sensor, mintime, maxtime, df):
+# #here is where the physical limitiations of each variable will be pitted
+# #    against all other variables (where applicable) to determine validity,
+# #    for example, dewpoint cannot exceed temperature
+
+# def IC_test(sensor, mintime, maxtime, df):
+#
+#     #set wind direction to zero if wind SPEED is below some threshold
+#
+#     #here is where you can set limitations (and subsequent flags on those
+#     #    that exceed the limitations) for the SI1145 readings based on the
+#     #    known amounts of incoming solar radiation from both total and 
+#     #    specific spectral range contributions
 
 
 
-##############################################################################
-#######################   TEMPORAL CONSISTENCY TEST   ########################
-##############################################################################
+# ##############################################################################
+# #######################   TEMPORAL CONSISTENCY TEST   ########################
+# ##############################################################################
 
-def temporal_test(sensor, mintime, maxtime, df):
+# #here is where we will flag any data blips (sharp, non-physical rises or
+# #    decreases) or runs (extended periods of non-/low-variability) in data
+
+# def temporal_test(sensor, mintime, maxtime, df):
+#
+#     #beware of erroneously flagged calm winds (speed and direction); you may
+#     #    have to set a threshold of wind speed such that there is a higher
+#     #    tolerance for excessively low variability IF wind speeds are below
+#     #    some statistically significant, predetermined threshold
+
+
+
+# ##############################################################################
+# #######################   CLIMATOLOGICAL LIMITS TEST   #######################
+# ##############################################################################
+
+# def climo_test(sensor, mintime, maxtime, df):
+#
+#     #here might be the appropriate place to place an upper limit on the
+#     #    radiation sensor's readings
 
 
    
 if __name__ == "__main__":
     limits_test()
+    # IC_test()
+    # temporal_test()
 
 
 
