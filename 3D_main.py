@@ -147,11 +147,53 @@ import plotter as pltr
 
 #set this to the name of the sensor from which you want to plot (NOT case
 #    sensitive)
-sensor = "BMP280"
+sensor = "si1145"
 
 #set the 'directory' variable to the absolute path where your data are stored;
 #    don't forget the trailing forward slash!
-directory = "/Users/blund/Documents/3D-PAWS/Data/3DPAWS_FrederickCO/data/bmp/"
+directory = ["/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/barbados01/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/BMS/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/bowmanston/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/curacao/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe01/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe02/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe03/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe04/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe05/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe06/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe07/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe08/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe09/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe10/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe11/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe12/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe13/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe14/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe15/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe16/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe17/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe18/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe19/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe20/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe21/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/halfacre/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/lakefolly/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/senegal/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo01/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo02/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo03/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo04/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo05/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo06/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo07/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo08/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo09/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo10/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo11/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo12/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo13/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo14/",
+             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/zambia06/"]
 
 #specify the FULL file path to the directory in which to save your figures;
 #    don't forget to include the trailing forward slash!
@@ -169,7 +211,7 @@ site_ID = "Frederick_CO"
 
 #change this to the name of the variable you want to plot; a list of
 #    acceptable options can be found in the "How to Use:" section above
-var_name = "temp_C"
+var_name = "vis"
 
 #change this to the units you want to plot; a list of acceptable options can
 #    be found in the "How to Use:" section above*
@@ -214,124 +256,149 @@ plot_opt = ""
 #NOTE: this is only used for the default plotting option ("plotter")
 tag = "network-time"
 
+vis_min = []
+vis_max = []
+ir_min = []
+ir_max = []
+uv_min = []
+uv_max = []
+
+for folder in directory:
+    
+
+    ##############################################################################
+    ############################    VERIFY INPUT    ##############################
+    ##############################################################################
+    
+    #call the input checker function to verify a number of user inputs, namely,
+    check_inputs = input_checker(sensor, var_name, units, averaged, avg_window)
+    
+    #'averaged' is the only variable that has the potential to change when sent to
+    #    the input checker so it gets redefined here, even if is does not change
+    #    in the input checker
+    averaged = check_inputs
+    
+    
+    
+    ##############################################################################
+    ###########################    READ IN FILE(S)    ############################
+    ##############################################################################
+    
+    #call the appropriate function based on the sensor/variable name; need a bunch
+    #    'if' statments here
+    
+    
+    #read in the dataframe(s) by calling the function designed to read the data;
+    #    this is pre-processed data being read in so any sorting, removal of
+    #    duplicate timestamps, data conversions, etc. is done before these
+    #    dataframes are read into this program. Parameters such as averaging and
+    #    averaging window are specified in THIS program and given to the other
+    #    program's function so that parameters in the other program do not override
+    #    the ones used for THIS program
+    
+    if sensor.lower() == "bmp180" or sensor.lower() == "bmp280":
+        call_reader = reader.bmp(folder, wildcard)
+    elif sensor.lower() == "htu21d":
+        call_reader = reader.htu21d(folder, wildcard)
+    elif sensor.lower() == "mcp9808":
+        call_reader = reader.mcp9808(folder, wildcard)
+    elif sensor.lower() == "si1145":
+        call_reader = reader.si1145(folder, wildcard)
+    elif sensor.lower() == "rain":
+        call_reader = reader.rain_gauge(folder, units, wildcard)
+    elif sensor.lower() == "wind_vane":
+        call_reader = reader.wind_vane(folder, wildcard)
+    elif sensor.lower() == "anemometer":
+        call_reader = reader.anemometer(folder, units, wildcard)
+    else:
+        #redundant, given that this parameter gets checked with the input checker
+        print("Sensor name not recognized. Program exited...")
+        sys.exit()
+    
+    #df = reader."%s"(directory, wildcard) % sensor
+    df = call_reader[0]
+    missing_reports_times = call_reader[1]
+    
+    
+    ##############################################################################
+    ######################    VERIFYING MINTIME/MAXTIME    #######################
+    ##############################################################################
+    
+    #this must be done AFTER the data is read in and cleansed since the dataset is
+    #    used to determine the validity of the user-input 'mintime' and 'maxtime'
+    check_time = time_checker(mintime, maxtime, plot_opt, df)
+    
+    #the following variables are output from the time_checker function called above;
+    #    separate them by their respective, appropriate variable names since they
+    #    will get used again below
+    
+    #mintime
+    mintime = check_time[0]
+    
+    #maxtime
+    maxtime = check_time[1]
+    
+    #plotting option
+    plot_opt = check_time[2]
+    
+    #time_checker will only spit out a list of missing report times within the
+    #    user-defined time frame, if the time frame is set as anything other than
+    #    the entire dataset
+    if mintime != 0 or maxtime != df.index[-1]:
+        #timestamps for missing reports WITHIN THE USER-DEFINED TIME FRAME
+        tf_missing_report_times = check_time[3]
+    
+    
+    
+    ##############################################################################
+    ##########################    QUALITY ASSURANCE    ###########################
+    ##############################################################################
+    
+    # #call the quality assurance function
+    # call_QA = qa(sensor, mintime, maxtime, df)
+    
+    
+    
+    ##############################################################################
+    ###########################    DATA PROCESSING    ############################
+    ##############################################################################
+    
+    #create a 'time' variable from the 'time' column in the DataFrame as a
+    #   DatetimeIndex array; this will be used for other calculations/test below
+    time = pd.to_datetime(np.array(df.time))
+    
+    ''' Don't compute analytics on averaged / smoothed data, and don't smooth
+        analytic products '''
+    
+    #right now, the anemometer is the only sensor that has the ability for
+    #    smoothing/averaging
+    if sensor == "anemometer":
+        df = smoothing(averaged, avg_window, df)
+    
+    #data conversions are computed in the reader functions for wind speed and rain
+    
+    ##############################################################################
+    #compute any statistical analytics here; this is a place holder and will call
+    #    a function that does all the work for us; some, if not all, this
+    #    information will get plugged into the creation of the output file
+    
+    vis_min.append(df.vis.min())
+    vis_max.append(df.vis.max())
+    ir_min.append(df.ir.min())
+    ir_max.append(df.ir.max())
+    uv_min.append(df.uv.min())
+    uv_max.append(df.uv.max())
+    
+    #resetting 'mintime' and 'maxtime' for the next iteration of the loop
+    mintime = ""
+    maxtime = ""
+    
+    
+### END OF LOOP ###
 
 
-##############################################################################
-############################    VERIFY INPUT    ##############################
-##############################################################################
-
-#call the input checker function to verify a number of user inputs, namely,
-check_inputs = input_checker(sensor, var_name, units, averaged, avg_window)
-
-#'averaged' is the only variable that has the potential to change when sent to
-#    the input checker so it gets redefined here, even if is does not change
-#    in the input checker
-averaged = check_inputs
-
-
-
-##############################################################################
-###########################    READ IN FILE(S)    ############################
-##############################################################################
-
-#call the appropriate function based on the sensor/variable name; need a bunch
-#    'if' statments here
-
-
-#read in the dataframe(s) by calling the function designed to read the data;
-#    this is pre-processed data being read in so any sorting, removal of
-#    duplicate timestamps, data conversions, etc. is done before these
-#    dataframes are read into this program. Parameters such as averaging and
-#    averaging window are specified in THIS program and given to the other
-#    program's function so that parameters in the other program do not override
-#    the ones used for THIS program
-
-if sensor.lower() == "bmp180" or sensor.lower() == "bmp280":
-    call_reader = reader.bmp(directory, wildcard)
-elif sensor.lower() == "htu21d":
-    call_reader = reader.htu21d(directory, wildcard)
-elif sensor.lower() == "mcp9808":
-    call_reader = reader.mcp9808(directory, wildcard)
-elif sensor.lower() == "si1145":
-    call_reader = reader.si1145(directory, wildcard)
-elif sensor.lower() == "rain":
-    call_reader = reader.rain_gauge(directory, units, wildcard)
-elif sensor.lower() == "wind_vane":
-    call_reader = reader.wind_vane(directory, wildcard)
-elif sensor.lower() == "anemometer":
-    call_reader = reader.anemometer(directory, units, wildcard)
-else:
-    #redundant, given that this parameter gets checked with the input checker
-    print("Sensor name not recognized. Program exited...")
-    sys.exit()
-
-#df = reader."%s"(directory, wildcard) % sensor
-df = call_reader[0]
-missing_reports_times = call_reader[1]
-
-
-##############################################################################
-######################    VERIFYING MINTIME/MAXTIME    #######################
-##############################################################################
-
-#this must be done AFTER the data is read in and cleansed since the dataset is
-#    used to determine the validity of the user-input 'mintime' and 'maxtime'
-check_time = time_checker(mintime, maxtime, plot_opt, df)
-
-#the following variables are output from the time_checker function called above;
-#    separate them by their respective, appropriate variable names since they
-#    will get used again below
-
-#mintime
-mintime = check_time[0]
-
-#maxtime
-maxtime = check_time[1]
-
-#plotting option
-plot_opt = check_time[2]
-
-#time_checker will only spit out a list of missing report times within the
-#    user-defined time frame, if the time frame is set as anything other than
-#    the entire dataset
-if mintime != 0 or maxtime != df.index[-1]:
-    #timestamps for missing reports WITHIN THE USER-DEFINED TIME FRAME
-    tf_missing_report_times = check_time[3]
-
-
-
-##############################################################################
-##########################    QUALITY ASSURANCE    ###########################
-##############################################################################
-
-# #call the quality assurance function
-# call_QA = qa(sensor, mintime, maxtime, df)
-
-
-
-##############################################################################
-###########################    DATA PROCESSING    ############################
-##############################################################################
-
-#create a 'time' variable from the 'time' column in the DataFrame as a
-#   DatetimeIndex array; this will be used for other calculations/test below
-time = pd.to_datetime(np.array(df.time))
-
-''' Don't compute analytics on averaged / smoothed data, and don't smooth
-    analytic products '''
-
-#right now, the anemometer is the only sensor that has the ability for
-#    smoothing/averaging
-if sensor == "anemometer":
-    df = smoothing(averaged, avg_window, df)
-
-#data conversions are computed in the reader functions for wind speed and rain
-
-##############################################################################
-#compute any statistical analytics here; this is a place holder and will call
-#    a function that does all the work for us; some, if not all, this
-#    information will get plugged into the creation of the output file
-
+SI1145_df = pd.DataFrame({'vis_min':vis_min, 'ir_min':ir_min, 'uv_min':uv_min,
+                   'vis_max':vis_max, 'ir_max':ir_max, 'uv_max':uv_max})
 
 
 ##############################################################################
