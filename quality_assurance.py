@@ -65,7 +65,7 @@ def limits_test(sensor, mintime, maxtime, df):
     
     #si1145 specs
     si_min = 0.       # W m^-2
-    si_max = 1000.    # W m^-2
+    si_max = 10000.    # W m^-2
     
     #tipping bucket specs
     tb_min = 0.       # mm
