@@ -329,6 +329,8 @@ def pre_processing(df, second):
         
     else:
         print("There are no missing reports!\n")
+    
+    #df.replace(-999., np.nan)
 
     ##########################################################################
     

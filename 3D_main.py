@@ -152,11 +152,11 @@ sensor = "si1145"
 
 #set the 'directory' variable to the absolute path where your data are stored;
 #    don't forget the trailing forward slash!
-directory = "/Users/blund/Documents/3D-PAWS/Data/NCAR_Testbed2/wx_stn/MCP9808/"
+directory = "/Users/blund/Documents/3D-PAWS/Data/Kenya_globe_05/wx_stn/SI1145/"
 
 #specify the FULL file path to the directory in which to save your figures;
 #    don't forget to include the trailing forward slash!
-save_dir = "/Users/blund/Documents/Python_Scripts/Figures/CSA_3DPAWS01/MCP9808/"
+save_dir = "/Users/blund/Documents/3D-PAWS/_my_code/figures/si1145_testing/"
 
 #set the wildcard option; to read in EVERY file within the directory you
 #    specified above in 'directory', set 'wildcard' to "*"; you may specify
@@ -166,11 +166,11 @@ wildcard = "*"
 
 #change this to the name of the site from which data are being plotted; this
 #    will be used in the plot title as well as the name of the figure
-site_ID = "NCAR_Testbed02"
+site_ID = "GLOBE_05"
 
 #change this to the name of the variable you want to plot; a list of
 #    acceptable options can be found in the "How to Use:" section above
-var_name = "vis"
+var_name = "ir"
 
 #change this to the units you want to plot; a list of acceptable options can
 #    be found in the "How to Use:" section above*
@@ -207,13 +207,13 @@ maxtime = ""
 #set this to reflect the type of plots you want (i.e. daily, weekly, monthly,
 #    specified time frame); see the How To Use section for a list of accepted
 #    options; to NOT plot, set 'plot_opt' to an empty string, ""
-plot_opt = ""
+plot_opt = "weekly"
 
 #set the tag for which to add to the end of the figure name for saving in the
 #    'save_dir' directory; leave this as an empty string if no tag is desired;
 #    (e.g. set 'tag' to "2019-10" if you're plotting the month of October 2019)
 #NOTE: this is only used for the default plotting option ("plotter")
-tag = "network-time"
+tag = "limits-testing"
 
 
 
@@ -301,13 +301,13 @@ if mintime != 0 or maxtime != df.index[-1]:
 
 
 
-##############################################################################
-##########################    QUALITY ASSURANCE    ###########################
-##############################################################################
+# ##############################################################################
+# ##########################    QUALITY ASSURANCE    ###########################
+# ##############################################################################
 
-#call the quality assurance function; since it only returns the flagged
-#    dataframe, this can be called "df"
-df = QA.limits_test(sensor, mintime, maxtime, df)
+# #call the quality assurance function; since it only returns the flagged
+# #    dataframe, this can be called "df"
+# df = QA.limits_test(sensor, mintime, maxtime, df)
 
 
 
