@@ -132,6 +132,7 @@ Created on Thu Jun  4 16:05:12 2020
 import numpy as np
 import pandas as pd
 import sys
+import glob
 import reader
 from input_checker import input_checker
 from time_checker import time_checker
@@ -151,49 +152,51 @@ sensor = "si1145"
 
 #set the 'directory' variable to the absolute path where your data are stored;
 #    don't forget the trailing forward slash!
-directory = ["/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/barbados01/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/BMS/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/bowmanston/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/curacao/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe01/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe02/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe03/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe04/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe05/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe06/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe07/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe08/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe09/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe10/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe11/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe12/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe13/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe14/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe15/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe16/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe17/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe18/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe19/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe20/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe21/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/halfacre/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/lakefolly/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/senegal/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo01/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo02/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo03/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo04/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo05/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo06/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo07/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo08/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo09/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo10/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo11/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo12/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo13/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo14/",
-             "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/zambia06/"]
+# directory = ["/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/barbados01/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/BMS/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/bowmanston/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/curacao/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe01/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe02/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe03/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe04/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe05/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe06/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe07/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe08/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe09/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe10/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe11/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe12/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe13/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe14/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe15/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe16/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe17/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe18/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe19/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe20/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe21/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/halfacre/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/lakefolly/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/senegal/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo01/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo02/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo03/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo04/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo05/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo06/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo07/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo08/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo09/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo10/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo11/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo12/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo13/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo14/",
+#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/zambia06/"]
+
+directory = "/Users/blund/Documents/3D-PAWS/Data/_SI1145_ALL/"
 
 #specify the FULL file path to the directory in which to save your figures;
 #    don't forget to include the trailing forward slash!
@@ -263,7 +266,13 @@ ir_max = []
 uv_min = []
 uv_max = []
 
-for folder in directory:
+folder_list = glob.glob(directory + wildcard)
+folder_list = sorted(folder_list)
+
+counter = 0
+
+for folder in folder_list:
+    directory = folder + "/"
     
 
     ##############################################################################
@@ -297,19 +306,19 @@ for folder in directory:
     #    the ones used for THIS program
     
     if sensor.lower() == "bmp180" or sensor.lower() == "bmp280":
-        call_reader = reader.bmp(folder, wildcard)
+        call_reader = reader.bmp(directory, wildcard)
     elif sensor.lower() == "htu21d":
-        call_reader = reader.htu21d(folder, wildcard)
+        call_reader = reader.htu21d(directory, wildcard)
     elif sensor.lower() == "mcp9808":
-        call_reader = reader.mcp9808(folder, wildcard)
+        call_reader = reader.mcp9808(directory, wildcard)
     elif sensor.lower() == "si1145":
-        call_reader = reader.si1145(folder, wildcard)
+        call_reader = reader.si1145(directory, wildcard)
     elif sensor.lower() == "rain":
-        call_reader = reader.rain_gauge(folder, units, wildcard)
+        call_reader = reader.rain_gauge(directory, units, wildcard)
     elif sensor.lower() == "wind_vane":
-        call_reader = reader.wind_vane(folder, wildcard)
+        call_reader = reader.wind_vane(directory, wildcard)
     elif sensor.lower() == "anemometer":
-        call_reader = reader.anemometer(folder, units, wildcard)
+        call_reader = reader.anemometer(directory, units, wildcard)
     else:
         #redundant, given that this parameter gets checked with the input checker
         print("Sensor name not recognized. Program exited...")
@@ -393,6 +402,7 @@ for folder in directory:
     mintime = ""
     maxtime = ""
     
+    counter += 1
     
 ### END OF LOOP ###
 
