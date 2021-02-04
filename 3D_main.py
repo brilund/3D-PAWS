@@ -152,7 +152,7 @@ sensor = "si1145"
 
 #set the 'directory' variable to the absolute path where your data are stored;
 #    don't forget the trailing forward slash!
-directory = "/Users/blund/Documents/3D-PAWS/Data/Kenya_globe_05/wx_stn/SI1145/"
+directory = "/Users/blund/Documents/3D-PAWS/Data/_SI1145_ALL/Kenya_Globe_21/"
 
 #specify the FULL file path to the directory in which to save your figures;
 #    don't forget to include the trailing forward slash!
@@ -166,7 +166,7 @@ wildcard = "*"
 
 #change this to the name of the site from which data are being plotted; this
 #    will be used in the plot title as well as the name of the figure
-site_ID = "GLOBE_05"
+site_ID = "GLOBE_21"
 
 #change this to the name of the variable you want to plot; a list of
 #    acceptable options can be found in the "How to Use:" section above
