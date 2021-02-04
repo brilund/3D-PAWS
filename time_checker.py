@@ -194,27 +194,30 @@ def time_checker(mintime, maxtime, plot_opt, df):
     #    7 days, or 28 days, respectively
     if plot_opt == "weekly" and ((df.time[maxtime] - df.time[mintime]) < pd.Timedelta(weeks=1)):
         raise ValueError("The time delta given by 'mintime' and 'maxtime' is less than 7 days.\nPlease give a 'mintime' and 'maxtime' such that the time delta is at least 7 days when using the weekly plotter, or use the default plotter instead.")
-    if plot_opt == "daily" and ((df.time[maxtime] - df.time[mintime]) < pd.Timedelta(days=1)):
+    elif plot_opt == "daily" and ((df.time[maxtime] - df.time[mintime]) < pd.Timedelta(days=1)):
         raise ValueError("The time delta given by 'mintime' and 'maxtime' is less than 1 day.\nPlease give a 'mintime' and 'maxtime' such that the time delta is at least 1 day when using the daily plotter, or use the default plotter instead.")
-    if plot_opt == "monthly" and ((df.time[maxtime] - df.time[mintime]) < pd.Timedelta(days=28)):
-        raise ValueError("The time delta given by 'mintime' and 'maxtime' is less than 28 days.\nPlease give a 'mintime' and 'maxtime' such that the time delta is at least 28 days when using the monthly plotter, or use the default plotter instead.")
+    elif plot_opt == "monthly":
+        if ((df.time[maxtime] - df.time[mintime]) < pd.Timedelta(days=28)):
+            raise ValueError("The time delta given by 'mintime' and 'maxtime' is less than 28 days.\nPlease give a 'mintime' and 'maxtime' such that the time delta is at least 28 days when using the monthly plotter, or use the default plotter instead.")
+        else:
+            #this line will find the index of the very first day/time for each month in
+            #    the whole dataframe
+            day1_of_month_idx = df.index[df.set_index('time').index.day == 1][::1440]
+            
+            #this line will find the index(indices) of the very first day/time for each
+            #    month within the time frame set by the user (within 'mintime' and
+            #    'maxtime')
+            day1_of_month_idx = day1_of_month_idx[(day1_of_month_idx>mintime) & (day1_of_month_idx<maxtime)]
+            
+            #if the user time frame is GREATER THAN or EQUAL TO 28 days but does
+            #    not contain a first-of-the-month date/timestamp
+            #    (e.g. mintime = "2017-10-01 00:01" and maxtime = "2017-10-28 00:01"),
+            #    then default to the regular plotter
+            if day1_of_month_idx.empty == True:
+                print("Timeframe set by 'mintime' and 'maxtime' does not contain a first-of-the-month date/time.\nSetting 'plot_opt' to default.")
+                plot_opt = "plotter"
     else:
-        #this line will find the index of the very first day/time for each month in
-        #    the whole dataframe
-        day1_of_month_idx = df.index[df.set_index('time').index.day == 1][::1440]
-        
-        #this line will find the index(indices) of the very first day/time for each
-        #    month within the time frame set by the user (within 'mintime' and
-        #    'maxtime')
-        day1_of_month_idx = day1_of_month_idx[(day1_of_month_idx>mintime) & (day1_of_month_idx<maxtime)]
-        
-        #if the user time frame is GREATER THAN or EQUAL TO 28 days but does
-        #    not contain a first-of-the-month date/timestamp
-        #    (e.g. mintime = "2017-10-01 00:01" and maxtime = "2017-10-28 00:01"),
-        #    then default to the regular plotter
-        if day1_of_month_idx.empty == True:
-            print("Timeframe set by 'mintime' and 'maxtime' does not contain a first-of-the-month date/time.\nSetting 'plot_opt' to default.")
-            plot_opt = "plotter"
+        pass
     
     ######################### Uptime within Time Frame ########################### 
     
