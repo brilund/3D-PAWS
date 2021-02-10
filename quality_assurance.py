@@ -64,8 +64,8 @@ def limits_test(sensor, mintime, maxtime, df):
     mcp_t_max = 125.  # deg C
     
     #si1145 specs
-    si_min = 0.       # W m^-2
-    si_max = 1000.    # W m^-2
+    si_min = 0.       # unitless
+    si_max = 13000.   # unitless
     
     #tipping bucket specs
     tb_min = 0.       # mm

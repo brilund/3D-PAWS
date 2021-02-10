@@ -152,55 +152,11 @@ sensor = "si1145"
 
 #set the 'directory' variable to the absolute path where your data are stored;
 #    don't forget the trailing forward slash!
-# directory = ["/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/barbados01/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/BMS/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/bowmanston/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/curacao/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe01/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe02/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe03/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe04/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe05/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe06/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe07/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe08/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe09/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe10/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe11/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe12/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe13/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe14/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe15/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe16/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe17/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe18/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe19/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe20/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/globe21/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/halfacre/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/lakefolly/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/senegal/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo01/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo02/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo03/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo04/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo05/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo06/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo07/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo08/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo09/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo10/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo11/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo12/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo13/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/wmo14/",
-#              "/Users/blund/Documents/3D-PAWS/Data/_SI1145_TEST/zambia06/"]
-
 directory = "/Users/blund/Documents/3D-PAWS/Data/_SI1145_ALL/"
 
 #specify the FULL file path to the directory in which to save your figures;
 #    don't forget to include the trailing forward slash!
-save_dir = "/Users/blund/Documents/Python_Scripts/Figures/Frederick_CO/BMP280/"
+save_dir = "/Users/blund/Documents/3D-PAWS/_my_code/figures/si1145_testing/_monthly_ALL/ultraviolet/"
 
 #set the wildcard option; to read in EVERY file within the directory you
 #    specified above in 'directory', set 'wildcard' to "*"; you may specify
@@ -214,7 +170,7 @@ site_ID = "Frederick_CO"
 
 #change this to the name of the variable you want to plot; a list of
 #    acceptable options can be found in the "How to Use:" section above
-var_name = "vis"
+var_name = "uv"
 
 #change this to the units you want to plot; a list of acceptable options can
 #    be found in the "How to Use:" section above*
@@ -251,13 +207,13 @@ maxtime = ""
 #set this to reflect the type of plots you want (i.e. daily, weekly, monthly,
 #    specified time frame); see the How To Use section for a list of accepted
 #    options; to NOT plot, set 'plot_opt' to an empty string, ""
-plot_opt = ""
+plot_opt = "monthly"
 
 #set the tag for which to add to the end of the figure name for saving in the
 #    'save_dir' directory; leave this as an empty string if no tag is desired;
 #    (e.g. set 'tag' to "2019-10" if you're plotting the month of October 2019)
 #NOTE: this is only used for the default plotting option ("plotter")
-tag = "network-time"
+tag = "si1145-testing"
 
 vis_min = []
 vis_max = []
@@ -333,6 +289,8 @@ for folder in folder_list:
     ######################    VERIFYING MINTIME/MAXTIME    #######################
     ##############################################################################
     
+    plot_opt = "monthly"
+    
     #this must be done AFTER the data is read in and cleansed since the dataset is
     #    used to determine the validity of the user-input 'mintime' and 'maxtime'
     check_time = time_checker(mintime, maxtime, plot_opt, df)
@@ -397,73 +355,75 @@ for folder in folder_list:
     ir_max.append(df.ir.max())
     uv_min.append(df.uv.min())
     uv_max.append(df.uv.max())
+
+
+
+    ##############################################################################
+    ################################   OUTPUT   ##################################
+    ##############################################################################
     
+    # #placeholder section for generating a file that will store all kinds of stats,
+    # #    metrics and other metadata for analysis
+    # call_output = output.
+    
+    
+    
+    ##############################################################################
+    ###############################   PLOTTING   #################################
+    ##############################################################################
+    
+    #NOTE: plot_opt is not sent to the input checker because we have set it up
+    #      such that even if an incorrect/unacceptable option is provided (e.g. a
+    #      misspelling), the program will simply default to the regular "plotter"
+    
+    site_ID = folder[48:]
+    
+    #based on the user-input plotting option, call the appropriate plotting
+    #    function
+    if plot_opt == "plotter":
+        #call the regular plotting function; reminder: this simply plots the time
+        #    frame set by the user on one figure
+        pltr.plotter(sensor, save_dir, site_ID, var_name, units, averaged,
+                     avg_window, mintime, maxtime, plot_opt, tag, df)
+    
+    elif plot_opt == "daily":
+        #call the daily-plotting function
+        pltr.daily_plotter(sensor, save_dir, site_ID, var_name, units, averaged,
+                     avg_window, mintime, maxtime, plot_opt, tag, df)
+        
+    elif plot_opt == "weekly":
+        #call the weekly-plotting function
+        pltr.weekly_plotter(sensor, save_dir, site_ID, var_name, units, averaged,
+                            avg_window, mintime, maxtime, plot_opt, tag, df)
+    
+    elif plot_opt == "monthly":
+        #call the monthly-plotting function
+        pltr.monthly_plotter(sensor, save_dir, site_ID, var_name, units, averaged,
+                            avg_window, mintime, maxtime, plot_opt, tag, df)
+        
+    elif plot_opt == "":
+        #don't plot if 'plot_opt' set to an empty string
+        pass
+    
+    else:
+        #if any other option besides the specific options listed in the READ ME
+        #    section, assume the calling of the regular plotting function (e.g. in
+        #    the event of a misspelling, the program will still run but will
+        #    default to this option)
+        print("plot option not recognized...\n")
+        pltr.plotter(sensor, save_dir, site_ID, var_name, units, averaged,
+                     avg_window, mintime, maxtime, plot_opt, tag, df)
+
     #resetting 'mintime' and 'maxtime' for the next iteration of the loop
     mintime = ""
     maxtime = ""
     
     counter += 1
-    
-### END OF LOOP ###
 
+### END OF LOOP ###
 
 SI1145_df = pd.DataFrame({'vis_min':vis_min, 'ir_min':ir_min, 'uv_min':uv_min,
                    'vis_max':vis_max, 'ir_max':ir_max, 'uv_max':uv_max})
-
-
-##############################################################################
-################################   OUTPUT   ##################################
-##############################################################################
-
-# #placeholder section for generating a file that will store all kinds of stats,
-# #    metrics and other metadata for analysis
-# call_output = output.
-
-
-
-##############################################################################
-###############################   PLOTTING   #################################
-##############################################################################
-
-#NOTE: plot_opt is not sent to the input checker because we have set it up
-#      such that even if an incorrect/unacceptable option is provided (e.g. a
-#      misspelling), the program will simply default to the regular "plotter"
-
-#based on the user-input plotting option, call the appropriate plotting
-#    function
-if plot_opt == "plotter":
-    #call the regular plotting function; reminder: this simply plots the time
-    #    frame set by the user on one figure
-    pltr.plotter(sensor, save_dir, site_ID, var_name, units, averaged,
-                 avg_window, mintime, maxtime, plot_opt, tag, df)
-
-elif plot_opt == "daily":
-    #call the daily-plotting function
-    pltr.daily_plotter(sensor, save_dir, site_ID, var_name, units, averaged,
-                 avg_window, mintime, maxtime, plot_opt, tag, df)
-    
-elif plot_opt == "weekly":
-    #call the weekly-plotting function
-    pltr.weekly_plotter(sensor, save_dir, site_ID, var_name, units, averaged,
-                        avg_window, mintime, maxtime, plot_opt, tag, df)
-
-elif plot_opt == "monthly":
-    #call the monthly-plotting function
-    pltr.monthly_plotter(sensor, save_dir, site_ID, var_name, units, averaged,
-                        avg_window, mintime, maxtime, plot_opt, tag, df)
-    
-elif plot_opt == "":
-    #don't plot if 'plot_opt' set to an empty string
-    pass
-
-else:
-    #if any other option besides the specific options listed in the READ ME
-    #    section, assume the calling of the regular plotting function (e.g. in
-    #    the event of a misspelling, the program will still run but will
-    #    default to this option)
-    print("plot option not recognized...\n")
-    pltr.plotter(sensor, save_dir, site_ID, var_name, units, averaged,
-                 avg_window, mintime, maxtime, plot_opt, tag, df)
 
 
 

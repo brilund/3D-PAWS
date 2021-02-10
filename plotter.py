@@ -378,7 +378,7 @@ def plotter(sensor, save_dir, site_ID, var_name, units, averaged, avg_window,
         elif var_name == "ir": #plot temperature in Fahrenheit
             
             #set y-axis limits/range
-            ax.set_ylim(0., 10000.)
+            ax.set_ylim(0., 13000.)
             
             #set the y-axis label
             plt.ylabel("Infrared (W m$^-2$)")
