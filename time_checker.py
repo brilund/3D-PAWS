@@ -235,6 +235,7 @@ def time_checker(mintime, maxtime, plot_opt, df):
     else:
         pass
     
+    
     ######################### Uptime within Time Frame ########################### 
     
     #calculate the total uptime based on the number of missing reports,
