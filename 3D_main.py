@@ -72,6 +72,19 @@ Created on Thu Jun  4 16:05:12 2020
 #    11.Need to add RH measurement to BMP/BME sections of code
 #
 #
+#Necessary files:
+#    The following files are required in the same directory as 3D_main.py in
+#    order for everything to function properly:
+#
+#    1. input_checker.py
+#    2. time_checker.py
+#    3. reader.py
+#    4. data_smoother.py
+#    5. plotter.py
+#    6. quality_assurance.py
+#    7. output.py
+#
+#
 #How to Use:
 #    1. Change all variables in "USER OPTIONS" section to desired input
 #           sensor: bmp180, bmp280, htu21d, mcp9808, si1145, rain, anemometer, wind_vane
@@ -239,13 +252,13 @@ averaged = check_inputs
 #    'if' statments here
 
 
-#read in the dataframe(s) by calling the function designed to read the data;
-#    this is pre-processed data being read in so any sorting, removal of
-#    duplicate timestamps, data conversions, etc. is done before these
-#    dataframes are read into this program. Parameters such as averaging and
-#    averaging window are specified in THIS program and given to the other
-#    program's function so that parameters in the other program do not override
-#    the ones used for THIS program
+#read in the dataframe by calling the function designed to read the data for
+#    the user-specified sensor; this is pre-processed data being read in so
+#    any sorting, removal of duplicate timestamps, data conversions, etc. is
+#    done before these dataframes are read into this program. Parameters such
+#    as averaging and averaging window are specified in THIS program and given
+#    to the other program's function so that parameters in the other program
+#    do not override the ones used for THIS program
 
 if sensor.lower() == "bmp180" or sensor.lower() == "bmp280":
     call_reader = reader.bmp(directory, wildcard)
@@ -262,7 +275,8 @@ elif sensor.lower() == "wind_vane":
 elif sensor.lower() == "anemometer":
     call_reader = reader.anemometer(directory, units, wildcard)
 else:
-    #redundant, given that this parameter gets checked with the input checker
+    #redundant, given that this parameter gets checked with the input checker;
+    #    consider it a fail-safe
     print("Sensor name not recognized. Program exited...")
     sys.exit()
 

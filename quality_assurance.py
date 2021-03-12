@@ -65,15 +65,15 @@ def limits_test(sensor, mintime, maxtime, df):
     
     #si1145 specs
     si_min = 0.       # W m^-2
-    si_max = 10000.    # W m^-2
+    si_max = 13000.    # W m^-2
     
     #tipping bucket specs
     tb_min = 0.       # mm
-    tb_max = 100.     # mm
+    tb_max = 500.     # mm
     
     #anemometer specs
     ws_min = 0.       # m/s
-    ws_max = 50.      # m/s
+    ws_max = 75.      # m/s
     
     #wind vane specs
     wd_min = 0.       # deg
@@ -313,21 +313,37 @@ def limits_test(sensor, mintime, maxtime, df):
 #     #    known amounts of incoming solar radiation from both total and 
 #     #    specific spectral range contributions
 
+#     #if liquid precip is reported, temperature should be at least ???
+#     #how do we determine liquid precipiation with the data we have???
 
 
-# ##############################################################################
-# #######################   TEMPORAL CONSISTENCY TEST   ########################
-# ##############################################################################
 
-# #here is where we will flag any data blips (sharp, non-physical rises or
-# #    decreases) or runs (extended periods of non-/low-variability) in data
+##############################################################################
+#######################   TEMPORAL CONSISTENCY TEST   ########################
+##############################################################################
 
-# def temporal_test(sensor, mintime, maxtime, df):
-#
-#     #beware of erroneously flagged calm winds (speed and direction); you may
-#     #    have to set a threshold of wind speed such that there is a higher
-#     #    tolerance for excessively low variability IF wind speeds are below
-#     #    some statistically significant, predetermined threshold
+#here is where we will flag any data blips (sharp, non-physical rises or
+#    decreases) or runs (extended periods of non-/low-variability) in data
+
+def temporal_test(sensor, mintime, maxtime, df):
+
+    #beware of erroneously flagged calm winds (speed and direction); you may
+    #    have to set a threshold of wind speed such that there is a higher
+    #    tolerance for excessively low variability IF wind speeds are below
+    #    some statistically significant, predetermined threshold
+
+    #blip testing could be a two-tiered test comprised of a first pass that
+    #    flags any datum about which the consecutive forward-first
+    #    differences are non-zero and of opposite sign; the second pass can
+    #    consist of testing that flagged datum against a threshold
+    #    determined by a moving window of standard deviation calculations;
+    #    if the datum fails both tests, it is flagged; data that are flagged
+    #    by only one test should be manually inspected; consider a 5- to
+    #    10-minute window; this may flag some frontal passages for which you
+    #    may need to implement additional tests like checking other
+    #    variables (wind speed and/or direction change, humidity change,
+    #    pressure change, etc.)
+    
 
 
 
@@ -339,6 +355,31 @@ def limits_test(sensor, mintime, maxtime, df):
 #
 #     #here might be the appropriate place to place an upper limit on the
 #     #    radiation sensor's readings
+    # #t_min = -80.  # this minimum is not used because the WMO Guide's
+    #                # minimum is well below the lower limit of this
+    #                # sensor
+    # t_max = 60.   # deg C
+    # p_min = 500.  # hPa
+    # p_max = 1080. # hPa
+    # a_min = 0.    # meters
+    # a_max = 8850. # meters (based on the elevation of the summit of Mt. Everest)
+    # #rh_min = 0.   # these limits are within or equivalent to those set by
+    #               # sensor specification, hence, not necessary
+    # #rh_max = 100. # " "
+    
+    # si_min = 0.       # W m^-2
+    # si_max = 13000.    # W m^-2
+    
+    # precip_min = 0.       # mm
+    # precip_max = 500.     # mm
+    
+    # #anemometer specs
+    # ws_min = 0.       # m/s
+    # ws_max = 75.      # m/s
+    
+    # #wind vane specs
+    # wd_min = 0.       # deg
+    # wd_max = 360.     # deg
 
 
    

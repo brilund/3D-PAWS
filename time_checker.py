@@ -188,16 +188,34 @@ def time_checker(mintime, maxtime, plot_opt, df):
         #    the 'mintime' and 'maxtime' strings to pandas Timestamps
         mintime = time.get_loc(pd.to_datetime(mintime))
         maxtime = time.get_loc(pd.to_datetime(maxtime))
+        
+    
+    #################### Comparing plot_opt with Time Frame ######################
     
     #if using the daily, weekly, or monthly plotter, check that the interval
     #    of time determined by the user-defined range limits is at least 1 day,
     #    7 days, or 28 days, respectively
     if plot_opt == "weekly" and ((df.time[maxtime] - df.time[mintime]) < pd.Timedelta(weeks=1)):
-        raise ValueError("The time delta given by 'mintime' and 'maxtime' is less than 7 days.\nPlease give a 'mintime' and 'maxtime' such that the time delta is at least 7 days when using the weekly plotter, or use the default plotter instead.")
+        #if the amount of time in the entire dataset read in is less than the
+        #    required time...
+        if (df.time.max() - df.time.min() < pd.Timdeelta(weeks=1)):
+            print("Total time in dataset is less than 1 week. Changing to default plotter.\n")
+            plot_opt = "plotter" #...set plot_opt to the default plotter...
+        else: #...otherwise, raise the error message
+            raise ValueError("The time delta given by 'mintime' and 'maxtime' is less than 7 days.\nPlease give a 'mintime' and 'maxtime' such that the time delta is at least 7 days when using the weekly plotter, or use the default plotter instead.")
+    
     elif plot_opt == "daily" and ((df.time[maxtime] - df.time[mintime]) < pd.Timedelta(days=1)):
-        raise ValueError("The time delta given by 'mintime' and 'maxtime' is less than 1 day.\nPlease give a 'mintime' and 'maxtime' such that the time delta is at least 1 day when using the daily plotter, or use the default plotter instead.")
+        if (df.time.max() - df.time.min() < pd.Timedelta(days=1)):
+            print("Total time in dataset is less than 1 day. Changing to default plotter.\n")
+            plot_opt = "plotter"
+        else:
+            raise ValueError("The time delta given by 'mintime' and 'maxtime' is less than 1 day.\nPlease give a 'mintime' and 'maxtime' such that the time delta is at least 1 day when using the daily plotter, or use the default plotter instead.")
+    
     elif plot_opt == "monthly":
-        if ((df.time[maxtime] - df.time[mintime]) < pd.Timedelta(days=28)):
+        if (df.time.max() - df.time.min() < pd.Timedelta(days=28)):
+            print("Total time in dataset is less than 28 days. Changing to default plotter.\n")
+            plot_opt = "plotter"
+        elif ((df.time[maxtime] - df.time[mintime]) < pd.Timedelta(days=28)):
             raise ValueError("The time delta given by 'mintime' and 'maxtime' is less than 28 days.\nPlease give a 'mintime' and 'maxtime' such that the time delta is at least 28 days when using the monthly plotter, or use the default plotter instead.")
         else:
             #this line will find the index of the very first day/time for each month in
