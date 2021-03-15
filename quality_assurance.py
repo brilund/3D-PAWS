@@ -344,6 +344,13 @@ def temporal_test(sensor, mintime, maxtime, df):
     #    variables (wind speed and/or direction change, humidity change,
     #    pressure change, etc.)
     
+    #in the interest of time, if a user specifies a subset of the dateset by
+    #    setting 'mintime' and 'maxtime' to something other than the very
+    #    first and last timestamp in the dataset, you may want to perform this
+    #    particular procedure on only the subset of data specified.
+    #NOTE: if you only apply this test to the specified subset, you may as
+    #      well do the same for all other procedures; this will also affect
+    #      your plans for the output file
 
 
 
