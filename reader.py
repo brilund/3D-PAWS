@@ -474,7 +474,7 @@ def bmp(directory, wildcard):
     
     ##########################################################################
     
-    
+    #original
     #put all the data/time arrays into a DataFrame
     df = pd.DataFrame({'time':time, 'temp_C':temp_C, 'temp_F':temp_F,
                        'station_P':station_P, 'SLP_hPa':SLP_hPa,
@@ -1186,8 +1186,8 @@ def wind_vane(directory, wildcard):
                     year.append(l[2])
                     hour.append(l[3])
                     minute.append(l[4])
-                    second.append(l[5])
-                    wind_dir.append(l[7])
+                    #second.append(l[5])
+                    wind_dir.append(l[6]) #wind_dir.append(l[7])
                     
                 else: #if the above condition of 8 elements is not met, then 
                     #    count the occurrence and skip to the next 
@@ -1215,8 +1215,8 @@ def wind_vane(directory, wildcard):
     ########################## Checking Array Size ###########################
     
     #check that the number of elements in each array are the same
-    if len(month) == len(day) == len(year) == len(hour) == len(minute) == \
-        len(second) == len(wind_dir):
+    if len(month) == len(day) == len(year) == len(hour) == len(minute) == len(wind_dir): #\
+        #== len(second):
         #if all arrays have the same number of elements, then the read/append
         #    conditions above were met and everything is good.
         print("Number of elements in each variable array are equal. Continue...\n")
