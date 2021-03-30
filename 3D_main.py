@@ -685,7 +685,7 @@ for col in df.columns:
     else:
         pass
 
-#remove the "no_rain" columns from the rain dataframe; we don't want thes 
+#remove the "no_rain" columns from the rain dataframe; we don't want these 
 for col in df_rain.columns:
     if "no_rain" in col:
         df_rain = df_rain.drop(columns=col)
