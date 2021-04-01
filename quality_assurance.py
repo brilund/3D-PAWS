@@ -351,6 +351,12 @@ def temporal_test(sensor, mintime, maxtime, df):
     #NOTE: if you only apply this test to the specified subset, you may as
     #      well do the same for all other procedures; this will also affect
     #      your plans for the output file
+    #also try to test for jumps/steps using similar methods
+    
+    #must also test for runs in data; start by flagging values i such that the 
+    #    next adjacent value i+1 is equivalent to i. For every i+n value
+    #    thereafter that does not change, these values will be flagged. The
+    #    very first occurrence of the run will NOT be flagged
 
 
 
