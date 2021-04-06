@@ -231,6 +231,9 @@ def plotter(sensor, save_dir, site_ID, var_name, units, averaged, avg_window,
     ##########    
         #some parameters specific to 'units'
         if units == "mps": #plot wind speed in meters per second
+        
+            #by default, the data read in should be in millimeters so we need
+            #    do nothing
             
             #set y-axis limits/range
             ax.set_ylim(0., 10.)
@@ -239,6 +242,9 @@ def plotter(sensor, save_dir, site_ID, var_name, units, averaged, avg_window,
             plt.ylabel("Wind Speed (m s$^-1$)")
             
         elif units == "kmph": #plot wind speed in kilometers per hour
+        
+            #convert to kilometers per hour
+            df.wind_speed = 3.6 * df.wind_speed
             
             #set y-axis limits/range
             ax.set_ylim(0., 90.)
@@ -248,6 +254,9 @@ def plotter(sensor, save_dir, site_ID, var_name, units, averaged, avg_window,
             
         elif units == "mph":
             
+            #convert to miles per hous
+            df.wind_speed = 2.23694 * df.wind_speed
+            
             #set y-axis limits/range
             ax.set_ylim(0., 50.)
             
@@ -255,6 +264,9 @@ def plotter(sensor, save_dir, site_ID, var_name, units, averaged, avg_window,
             plt.ylabel("Wind Speed (m h$^-1$)")
         
         elif units == "kts": #plot wind speed in knots
+        
+            #convert to knots
+            df.wind_speed = 1.94384 * df.wind_speed
             
             #set y-axis limits/range
             ax.set_ylim(0., 50.)
@@ -266,7 +278,7 @@ def plotter(sensor, save_dir, site_ID, var_name, units, averaged, avg_window,
             #in theory, we have already accounted for this potential error with
             #    the input_checker, so this is redundant; may remove at some
             #    point
-            print("'units' not recognized. Program exiting...")
+            print("Unit identifier not recognized. Check 'units' in USER OPTIONS.\n")
             sys.exit()
     
 ##########   
@@ -287,6 +299,9 @@ def plotter(sensor, save_dir, site_ID, var_name, units, averaged, avg_window,
         
         #set y-axis range and title based on "millimeters"
         if units == "mm":
+            #by default, the data read in should be in millimeters so we need
+            #    do nothing
+            
             #set y-axis limits/range
             ax.set_ylim(-0.1, 5.)
             
@@ -295,11 +310,19 @@ def plotter(sensor, save_dir, site_ID, var_name, units, averaged, avg_window,
         
         #set y-axis range and title based on "inches"
         elif units == "inches":
-            #set y-axis limits/range
-            ax.set_ylim(-0.01, 0.2)
-            
-            #set the y-axis label
-            plt.ylabel("Precipitation (in.)")
+            #convert the data based on the user's input for the variable 'units'
+            df.rain = df.rain / 25.4
+                
+        else:
+            #this is technically a redundant error catcher since the input
+            #    checker should take care of this
+            raise ValueError("Input for 'units' not recognized.\nAccepted options are...\n 'mm' for millimeteres\n 'inches' for inches\n")
+                
+        #set y-axis limits/range
+        ax.set_ylim(-0.01, 0.2)
+        
+        #set the y-axis label
+        plt.ylabel("Precipitation (in.)")
             
 ##########    
     else: #for all other sensors, we plot here
