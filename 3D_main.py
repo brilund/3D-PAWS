@@ -104,7 +104,19 @@ Created on Thu Jun  4 16:05:12 2020
 #    2. Run with "python 3D_main.py" in terminal, or open in
 #       Spyder and run from there.
 #
-#Folder Structure (necessary if performing quality assurance procedures)
+#Folder Structure:
+#    1. Create a parent folder (preferably named for the site the data are
+#           from) that will contain the subfolders for each sensor you want to
+#           read in
+#    2. The parent folder should contain the subfolders for each sensor
+#           you want to read in; it is critical that each sensor subfolder within
+#           each station folder follow the same naming convention (e.g. 'bmp'
+#           for the BMP180 or BMP280, 'winddir' for wind direction from the
+#           wind vane, etc.)
+#       NOTE: if there are two BMP folders in the parent folder (e.g. BMP180
+#           and BMP280), you will either need to combine both folders into one,
+#           knowing that you will have a mixture of the two within your
+#           dataset, OR, eliminate one folder from the parent folder
 #
 #
 #Example header from files --> no file header(s)!!! (this could change...)
@@ -133,11 +145,20 @@ Created on Thu Jun  4 16:05:12 2020
 #       'maxtime' set to plot the whole thing (i.e. set to empty strings, ""),
 #       you will have 730 plots being generated.
 # ----------------------------------------------------------------------------
-#       Regarding the daily plotter only, this function is setup to begin at
-#       00:00 UTC
+#       The daily plotter is setup to begin at 00:00 UTC.
+#       The monthly plotter is setup to begin at 00:00 UTC of the first day of
+#       the month.
+#       The weekly plotter begins at the time set by 'mintime' (very first
+#       time of dataset if mintime = "")
 # ----------------------------------------------------------------------------
-#       and 00:00 UTC of the first day of the
-#       month for the monthly plotter
+#       This code assumes that the data format for each file from a particular
+#       sensor/folder is the same. If this is not the case, the code WILL
+#       break. Errors that could happen as a result will most likely be
+#       unequal array lengths from reader.py.
+#       The only exception to data format inequities that this code *should*
+#       handle is time being reported to the second (rather than minute) in
+#       some wind and/or rain gauge files.
+# ----------------------------------------------------------------------------      
 
 
 
@@ -259,8 +280,6 @@ averaged = check_inputs
 #    as averaging and averaging window are specified in THIS program and given
 #    to the other program's function so that parameters in the other program
 #    do not override the ones used for THIS [3D_main.py] program
-
-if sensor
 
 if sensor.lower() == "bmp180" or sensor.lower() == "bmp280":
     call_reader = reader.bmp(directory, wildcard)
