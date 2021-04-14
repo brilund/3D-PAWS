@@ -104,6 +104,8 @@ Created on Thu Jun  4 16:05:12 2020
 #    2. Run with "python 3D_main.py" in terminal, or open in
 #       Spyder and run from there.
 #
+#Folder Structure (necessary if performing quality assurance procedures)
+#
 #
 #Example header from files --> no file header(s)!!! (this could change...)
 #
@@ -161,11 +163,13 @@ import plotter as pltr
 
 #set this to the name of the sensor from which you want to plot (NOT case
 #    sensitive)
-sensor = "si1145"
+#NOTE: if performing any Quality Assurance procedures, you must read in the
+#    data from ALL sensors. To do this, set the "QA" variable below to True,
+sensor = "anemometer"
 
 #set the 'directory' variable to the absolute path where your data are stored;
 #    don't forget the trailing forward slash!
-directory = "/Users/blund/Documents/3D-PAWS/Data/_SI1145_ALL/Kenya_Globe_21/"
+directory = "/Users/blund/Documents/3D-PAWS/Data/CSA_3DPAWS01/wx_stn/windspd/"
 
 #specify the FULL file path to the directory in which to save your figures;
 #    don't forget to include the trailing forward slash!
@@ -179,7 +183,7 @@ wildcard = "*"
 
 #change this to the name of the site from which data are being plotted; this
 #    will be used in the plot title as well as the name of the figure
-site_ID = "GLOBE_21"
+site_ID = "CSA_3DPAWS01"
 
 #change this to the name of the variable you want to plot; a list of
 #    acceptable options can be found in the "How to Use:" section above
@@ -220,7 +224,7 @@ maxtime = ""
 #set this to reflect the type of plots you want (i.e. daily, weekly, monthly,
 #    specified time frame); see the How To Use section for a list of accepted
 #    options; to NOT plot, set 'plot_opt' to an empty string, ""
-plot_opt = "weekly"
+plot_opt = ""
 
 #set the tag for which to add to the end of the figure name for saving in the
 #    'save_dir' directory; leave this as an empty string if no tag is desired;
@@ -248,17 +252,15 @@ averaged = check_inputs
 ###########################    READ IN FILE(S)    ############################
 ##############################################################################
 
-#call the appropriate function based on the sensor/variable name; need a bunch
-#    'if' statments here
-
-
 #read in the dataframe by calling the function designed to read the data for
 #    the user-specified sensor; this is pre-processed data being read in so
 #    any sorting, removal of duplicate timestamps, data conversions, etc. is
 #    done before these dataframes are read into this program. Parameters such
 #    as averaging and averaging window are specified in THIS program and given
 #    to the other program's function so that parameters in the other program
-#    do not override the ones used for THIS program
+#    do not override the ones used for THIS [3D_main.py] program
+
+if sensor
 
 if sensor.lower() == "bmp180" or sensor.lower() == "bmp280":
     call_reader = reader.bmp(directory, wildcard)

@@ -65,11 +65,15 @@ def limits_test(sensor, mintime, maxtime, df):
     
     #si1145 specs
     si_min = 0.       # W m^-2
-    si_max = 13000.    # W m^-2
+    si_max = 13000.   # W m^-2; this is a theoretically maximum determined by
+                      #    analyzing the absolutely maximum SI readings for all
+                      #    stations within the tropical latitudes
     
     #tipping bucket specs
     tb_min = 0.       # mm
-    tb_max = 500.     # mm
+    tb_max = 5.       # mm this is based on a WMO maximum recorded 1-hour
+                      #    rainfall total divided by 60 to yield the 1-minute
+                      #    total of 5 cm in a 1 minute period.
     
     #anemometer specs
     ws_min = 0.       # m/s
@@ -315,6 +319,7 @@ def limits_test(sensor, mintime, maxtime, df):
 
 #     #if liquid precip is reported, temperature should be at least ???
 #     #how do we determine liquid precipiation with the data we have???
+#     #humidity should also be above some threshold (75% ???)
 
 
 
@@ -327,10 +332,24 @@ def limits_test(sensor, mintime, maxtime, df):
 
 def temporal_test(sensor, mintime, maxtime, df):
 
-    #beware of erroneously flagged calm winds (speed and direction); you may
-    #    have to set a threshold of wind speed such that there is a higher
-    #    tolerance for excessively low variability IF wind speeds are below
-    #    some statistically significant, predetermined threshold
+    if sensor.lower() == "anemometer":
+        
+        #testing wind data requires both wind speed and direction data, so
+        #    both sensor's data must be read in if performing these tests
+        #beware of erroneously flagged calm winds (speed and direction); you may
+        #    have to set a threshold of wind speed such that there is a higher
+        #    tolerance for excessively low variability IF wind speeds are below
+        #    some statistically significant, predetermined threshold
+        
+        #consider setting wind direction to zero for wind speeds less than X m/s???
+        #runs in wind direction are very likely the result of calm winds
+        
+        #first, find 
+        
+    ############################### Blip Test ################################
+    
+    #due to the turbulent nature of wind, blip testing for wind data is more
+    #    like scanning for abnormally high variability
 
     #blip testing could be a two-tiered test comprised of a first pass that
     #    flags any datum about which the consecutive forward-first
@@ -353,10 +372,22 @@ def temporal_test(sensor, mintime, maxtime, df):
     #      your plans for the output file
     #also try to test for jumps/steps using similar methods
     
+    #precip data will likely need to be exempt from temporal consistency tests
+    #    since the very nature of precipitation means that there will
+    #    inevitably be long runs (like with no rain occurring) and blips
+    
+    
+    ################################ Run Test ################################
+    
     #must also test for runs in data; start by flagging values i such that the 
     #    next adjacent value i+1 is equivalent to i. For every i+n value
     #    thereafter that does not change, these values will be flagged. The
     #    very first occurrence of the run will NOT be flagged
+    
+    #due to the turbulent nature of wind, run testing for wind data is more
+    #    like scanning for abnormally low variability
+    
+    
 
 
 
@@ -384,7 +415,7 @@ def temporal_test(sensor, mintime, maxtime, df):
     # si_max = 13000.    # W m^-2
     
     # precip_min = 0.       # mm
-    # precip_max = 500.     # mm
+    # precip_max = 5.     # mm
     
     # #anemometer specs
     # ws_min = 0.       # m/s
@@ -400,6 +431,7 @@ if __name__ == "__main__":
     limits_test()
     # IC_test()
     # temporal_test()
+    # climo_test()
 
 
 

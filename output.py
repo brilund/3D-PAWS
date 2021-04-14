@@ -135,6 +135,6 @@ def timeframe_uptime(mintime, maxtime, df):
         
  
 if __name__ == "__main__":
-    quality_assurance()
+    timeframe_uptime()
         
         
