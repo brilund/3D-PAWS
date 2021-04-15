@@ -215,7 +215,7 @@ def time_checker(mintime, maxtime, plot_opt, df):
         if plot_opt == "weekly" and ((df.time[maxtime] - df.time[mintime]) < pd.Timedelta(weeks=1)):
             #if the amount of time in the entire dataset read in is less than the
             #    required time...
-            if (df.time.max() - df.time.min() < pd.Timdeelta(weeks=1)):
+            if (df.time.max() - df.time.min() < pd.Timedelta(weeks=1)):
                 print("Total time in dataset is less than 1 week. Changing to default plotter.\n")
                 plot_opt = "plotter" #...set plot_opt to the default plotter...
             else: #...otherwise, raise the error message
