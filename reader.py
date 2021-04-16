@@ -1091,16 +1091,11 @@ def rain_gauge(directory, units, wildcard):
     missing_reports = call_processor[1]
     
     
-    ################################ Convert Data ################################
-
-    #convert the data (when applicable) based on the user's input for the variable
-    #    "units"
-    if units == "mm":
-        pass #no need to convert here
-    elif units == "inches":
-        df.rain = df.rain / 25.4
-    else:
-        raise ValueError("Input for 'units' not recognized.\nAccepted options are...\n 'mm' for millimeteres\n 'inches' for inches\n")
+    ############################ Converting Data #############################
+    
+    #converting precipitation amounts to user-defined units is now performed
+    #    in the plotter program so that we may remove the 'units' input from
+    #    this function
     
     #add a column to the dataframe that essentially masks all values except zeroes;
     #    this ought to more clearly show when data was being recorded but there
@@ -1406,23 +1401,9 @@ def anemometer(directory, units, wildcard):
     
     ############################ Converting Data #############################
     
-    #converting wind speed to user-defined units
-    if units == "mps":
-        #if plotting in meters per second, no need to convert anything
-        pass
-    elif units == "kmph":
-        #convert to kilometers per hour
-        wind_speed = 3.6 * wind_speed
-    elif units == "mph":
-        #convert to miles per hous
-        wind_speed = 2.23694 * wind_speed
-    elif units == "kts":
-        #convert to knots
-        wind_speed = 1.94384 * wind_speed
-    else:
-        #on the off-chance the unit name checker does not catch an unaccepted name...
-        print("Unit identifier not recognized. Check 'units' in USER OPTIONS.\n")
-        sys.exit()
+    #converting wind speed to user-defined units is now performed in the
+    #    plotter program so that we may remove the 'units' input from this
+    #    function
     
     
     ########################## Creating Timestamps ###########################
