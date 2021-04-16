@@ -299,6 +299,9 @@ def plotter(sensor, save_dir, site_ID, var_name, units, averaged, avg_window,
         
         #set y-axis range and title based on "millimeters"
         if units == "mm":
+            #by default, the data read in should be in millimeters so we need
+            #    do nothing
+            
             #set y-axis limits/range
             ax.set_ylim(-0.1, 5.)
             
@@ -307,11 +310,19 @@ def plotter(sensor, save_dir, site_ID, var_name, units, averaged, avg_window,
         
         #set y-axis range and title based on "inches"
         elif units == "inches":
-            #set y-axis limits/range
-            ax.set_ylim(-0.01, 0.2)
-            
-            #set the y-axis label
-            plt.ylabel("Precipitation (in.)")
+            #convert the data based on the user's input for the variable 'units'
+            df.rain = df.rain / 25.4
+                
+        else:
+            #this is technically a redundant error catcher since the input
+            #    checker should take care of this
+            raise ValueError("Input for 'units' not recognized.\nAccepted options are...\n 'mm' for millimeteres\n 'inches' for inches\n")
+                
+        #set y-axis limits/range
+        ax.set_ylim(-0.01, 0.2)
+        
+        #set the y-axis label
+        plt.ylabel("Precipitation (in.)")
             
 ##########    
     else: #for all other sensors, we plot here
