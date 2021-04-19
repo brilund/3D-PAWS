@@ -1212,8 +1212,8 @@ def wind_vane(directory, wildcard):
     ########################## Checking Array Size ###########################
     
     #check that the number of elements in each array are the same
-    if len(month) == len(day) == len(year) == len(hour) == len(minute) == \
-        len(second) == len(wind_dir):
+    if len(month) == len(day) == len(year) == len(hour) == len(minute) == len(wind_dir): #/ 
+        #== len(second):
         #if all arrays have the same number of elements, then the read/append
         #    conditions above were met and everything is good.
         print("Number of elements in each variable array are equal. Continue...\n")
