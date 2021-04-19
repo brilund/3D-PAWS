@@ -1183,8 +1183,8 @@ def wind_vane(directory, wildcard):
                     year.append(l[2])
                     hour.append(l[3])
                     minute.append(l[4])
-                    second.append(l[5])
-                    wind_dir.append(l[7])
+                    #second.append(l[5])
+                    wind_dir.append(l[6]) #wind_dir.append(l[7])
                     
                 else: #if the above condition of 8 elements is not met, then 
                     #    count the occurrence and skip to the next 
