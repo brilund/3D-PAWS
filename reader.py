@@ -1091,15 +1091,6 @@ def rain_gauge(directory, units, wildcard):
     
     ################################ Convert Data ################################
 
-    #convert the data (when applicable) based on the user's input for the variable
-    #    "units"
-    if units == "mm":
-        pass #no need to convert here
-    elif units == "inches":
-        df.rain = df.rain / 25.4
-    else:
-        raise ValueError("Input for 'units' not recognized.\nAccepted options are...\n 'mm' for millimeteres\n 'inches' for inches\n")
-    
     #add a column to the dataframe that essentially masks all values except zeroes;
     #    this ought to more clearly show when data was being recorded but there
     #    was no rain vs. no data being recorded (i.e. downtime)
