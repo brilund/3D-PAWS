@@ -1402,27 +1402,6 @@ def anemometer(directory, units, wildcard):
     wind_speed = np.array(wind_speed, dtype=float) #this is a float
     
     
-    ############################ Converting Data #############################
-    
-    #converting wind speed to user-defined units
-    if units == "mps":
-        #if plotting in meters per second, no need to convert anything
-        pass
-    elif units == "kmph":
-        #convert to kilometers per hour
-        wind_speed = 3.6 * wind_speed
-    elif units == "mph":
-        #convert to miles per hous
-        wind_speed = 2.23694 * wind_speed
-    elif units == "kts":
-        #convert to knots
-        wind_speed = 1.94384 * wind_speed
-    else:
-        #on the off-chance the unit name checker does not catch an unaccepted name...
-        print("Unit identifier not recognized. Check 'units' in USER OPTIONS.\n")
-        sys.exit()
-    
-    
     ########################## Creating Timestamps ###########################
     
     #call the timestamp generator function
