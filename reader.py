@@ -181,7 +181,7 @@ def pre_processing(df, second):
     num_out_of_order = len(times_out_of_order)
     
     #tell the user the absolute frequency of which timestamps are out of order
-    print("Time reset %s times.\n" % num_out_of_order)
+    print("Time reset %s time(s).\n" % num_out_of_order)
     
     
     ######################## Massaging the timestamps ########################
