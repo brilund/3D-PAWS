@@ -1435,6 +1435,6 @@ if __name__ == "__main__":
     rain_gauge()
     wind_vane()
     anemometer()
-    #stream_gauge
+    #stream_gauge()
 
 
