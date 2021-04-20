@@ -151,8 +151,8 @@ def time_checker(mintime, maxtime, plot_opt, df):
             pd.to_datetime(maxtime) > df.time.max() or \
                 pd.to_datetime(maxtime) < df.time.min():
         print("'mintime'/'maxtime' are outside the range of time.")
-        print("The minimum start time is %s." % str(time.min()))
-        print("The maximum end time is %s.\n" % str(time.max()))
+        print("The minimum start time is %s." % str(df.time.min()))
+        print("The maximum end time is %s.\n" % str(df.time.max()))
         #remind the user what their start/end time limits are^
         sys.exit()
     
