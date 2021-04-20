@@ -948,7 +948,7 @@ def si1145(directory, wildcard):
 #######################    RAIN / TIPPING BUCKET    ##########################
 ##############################################################################
 
-def rain_gauge(directory, units, wildcard):
+def rain_gauge(directory, wildcard):
     
     #tell the user that the function was called
     print("------------------------------------------------------------------\n")
@@ -1212,7 +1212,7 @@ def wind_vane(directory, wildcard):
     ########################## Checking Array Size ###########################
     
     #check that the number of elements in each array are the same
-    if len(month) == len(day) == len(year) == len(hour) == len(minute) == len(wind_dir): #/ 
+    if len(month) == len(day) == len(year) == len(hour) == len(minute) == len(wind_dir): #\ 
         #== len(second):
         #if all arrays have the same number of elements, then the read/append
         #    conditions above were met and everything is good.
@@ -1281,7 +1281,7 @@ def wind_vane(directory, wildcard):
 ##############################    ANEMOMETER    ##############################
 ##############################################################################
 
-def anemometer(directory, units, wildcard):
+def anemometer(directory, wildcard):
     #tell the user that the function was called
     print("------------------------------------------------------------------\n")
     print("ANEMOMETER reader function called...\n")
@@ -1448,5 +1448,6 @@ if __name__ == "__main__":
     rain_gauge()
     wind_vane()
     anemometer()
+    #stream_gauge()
 
 
