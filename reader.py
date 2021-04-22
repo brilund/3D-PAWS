@@ -478,7 +478,7 @@ def bmp(directory, wildcard):
     
     
     #put all the data/time arrays into a DataFrame
-    df = pd.DataFrame({'time':time, 'temp_C':temp_C, 'temp_F':temp_F,
+    df = pd.DataFrame({'time':time, 'BMP_temp_C':temp_C, 'BMP_temp_F':temp_F,
                        'station_P':station_P, 'SLP_hPa':SLP_hPa,
                        'SLP_inHg':SLP_inHg, 'alt':alt})
     
@@ -625,8 +625,8 @@ def htu21d(directory, wildcard):
     
     
     #put all the data/time arrays into a DataFrame
-    df = pd.DataFrame({'time':time, 'temp_C':temp_C, 'temp_F':temp_F,
-                       'rel_hum':rel_hum})
+    df = pd.DataFrame({'time':time, 'HTU_temp_C':temp_C, 'HTU_temp_F':temp_F,
+                       'HTU_rel_hum':rel_hum})
     
     
     ############################# Data Cleansing #############################
@@ -768,7 +768,7 @@ def mcp9808(directory, wildcard):
     
     
     #put all the data/time arrays into a DataFrame
-    df = pd.DataFrame({'time':time, 'temp_C':temp_C, 'temp_F':temp_F})
+    df = pd.DataFrame({'time':time, 'MCP_temp_C':temp_C, 'MCP_temp_F':temp_F})
     
     
     ############################# Data Cleansing #############################
