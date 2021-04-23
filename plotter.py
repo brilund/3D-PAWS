@@ -545,8 +545,8 @@ def daily_plotter(sensor, save_dir, site_ID, var_name, units, averaged,
     #    missing data
     
     #######################
-    #now, loop through the entire time frame set by the user with 1-week intervals
-    #    making a week-long plot of the chosen variable for each iteration
+    #now, loop through the entire time frame set by the user with 1-day intervals
+    #    making a day-long plot of the chosen variable for each iteration
     for d in range(start,end,interval):
         
         #increase total counter by 1
@@ -812,8 +812,8 @@ def monthly_plotter(sensor, save_dir, site_ID, var_name,
     #    missing data
     
     #######################
-    #now, loop through the entire time frame set by the user with 1-week intervals
-    #    making a week-long plot of the chosen variable for each iteration
+    #now, loop through the entire time frame set by the user with 1-month intervals
+    #    making a month-long plot of the chosen variable for each iteration
     for m in range(len(day1_of_month_idx)):
         
         #increase total counter by 1
@@ -910,7 +910,7 @@ if __name__ == "__main__":
     plotter()
     daily_plotter()
     weekly_plotter()
-    #monthly_plotter()
+    monthly_plotter()
 
 
 
