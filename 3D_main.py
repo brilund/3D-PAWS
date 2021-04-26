@@ -38,7 +38,9 @@ Created on Thu Jun  4 16:05:12 2020
 #
 #
 #History:
-#    August 19, 2020 - First Write
+#    Aug 19, 2020 - First Write
+#    Apr 23, 2021 - included sensor identifiers to the names of the temperature
+#                   and humidity variables
 #
 #
 #Planned Features:
@@ -107,7 +109,8 @@ Created on Thu Jun  4 16:05:12 2020
 #Folder Structure:
 #    1. Create a parent folder (preferably named for the site the data are
 #           from) that will contain the subfolders for each sensor you want to
-#           read in
+#           read in. The full, absolute path to this folder should be what you
+#           give to the 'directory' variable
 #    2. The parent folder should contain the subfolders for each sensor
 #           you want to read in; it is critical that each sensor subfolder within
 #           each station folder follow the same naming convention (e.g. 'bmp'
@@ -186,7 +189,7 @@ import plotter as pltr
 #    sensitive)
 #NOTE: if performing any Quality Assurance procedures, you must read in the
 #    data from ALL sensors. To do this, set the "QA" variable below to True,
-sensor = "anemometer"
+sensor = "bmp280"
 
 #set the 'directory' variable to the absolute path where your data are stored;
 #    don't forget the trailing forward slash!
@@ -208,7 +211,7 @@ site_ID = "CSA_3DPAWS01"
 
 #change this to the name of the variable you want to plot; a list of
 #    acceptable options can be found in the "How to Use:" section above
-var_name = "ir"
+var_name = "temp_C"
 
 #change this to the units you want to plot; a list of acceptable options can
 #    be found in the "How to Use:" section above*
@@ -251,7 +254,7 @@ plot_opt = ""
 #    'save_dir' directory; leave this as an empty string if no tag is desired;
 #    (e.g. set 'tag' to "2019-10" if you're plotting the month of October 2019)
 #NOTE: this is only used for the default plotting option ("plotter")
-tag = "limits-testing"
+tag = ""
 
 
 
@@ -339,6 +342,22 @@ if mintime != 0 or maxtime != df.index[-1]:
 # ##############################################################################
 # ##########################    QUALITY ASSURANCE    ###########################
 # ##############################################################################
+
+# #Decide in this section (using some newly added user options) to...
+# #    1) perform any quality assurance tests, and if yes...
+# #    2) ... whether or not to remove flagged data points (convert them to NaNs???)
+# #Because the use of quality assurance procedures requires you to read in ALL
+# #    data, consider adding additional calls for the 'reader' functions within
+# #    the quality assurance function such that the final dataframe returned is
+# #    assured of quality based on ALL the data but contains only the data in
+# #    specified by the user (e.g. BMP temperature is what I want to plot, but
+# #    may require an assessment of other parameters from other sensors to
+# #    determine its quality)
+# #Alternatively, I could simply modify the entire 3D_main such that first it
+# #    checks to see if QA procedures are requested, if so, then check for a
+# #    few specifics, and loop through all the folders, reading in all the data
+# #    and performing the QA. If not, carry on with the original, un-modified
+# #    version of this code
 
 # #call the quality assurance function; since it only returns the flagged
 # #    dataframe, this can be called "df"

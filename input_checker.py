@@ -118,7 +118,7 @@ def _smooth_params(averaged, avg_window):
         raise ValueError("'averaged' option not recognized.")
     else:
         #'averaged' should equal False if we got to this point, and in that
-        #    case, there no need to do anything
+        #    case, there is no need to do anything
         pass
     
     
@@ -164,7 +164,7 @@ def input_checker(sensor, var_name, units, averaged, avg_window):
     
     #check whether 'sensor' (case insensitive) equals any of the accepted
     #    options in 'sensor_list'...
-    if sensor.lower() == sensor_list[0] or sensor.lower() == sensor_list[1]: #BMP180/280
+    if sensor.lower() == sensor_list[0] or sensor_list[1]: #BMP180/280
         
         #...if yes, check that 'var_name' was specificed appropriately and is
         #    associated with 'sensor'...

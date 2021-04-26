@@ -10,7 +10,7 @@ Created on Thu Dec 10 15:20:44 2020
 
 #the naming convention for the columns added to the data frame are as
 #    follows...
-#First letter (lowercase) represents the variable being tesed. It is
+#First letter (lowercase) represents the variable being tested. It is
 #    followed by an underscore and two capital letters: LC, IC, TC, CC.
 #    LC = Limits Check
 #    IC = Internal Check
@@ -23,6 +23,8 @@ Created on Thu Dec 10 15:20:44 2020
 #    temperature in Fahrenheit) are NOT checked, but are flagged if any
 #    one of the measured variables used to calculate it are flagged.
 
+
+
 ##############################################################################
 #########################    IMPORTING MODULES    ############################
 ##############################################################################
@@ -32,9 +34,9 @@ import pandas as pd
 
 
 
-##############################################################################
-##############################   LIMITS TEST   ###############################
-##############################################################################
+#----------------------------------------------------------------------------#
+#-----------------------------   LIMITS TEST   ------------------------------#
+#----------------------------------------------------------------------------#
 
 def limits_test(sensor, mintime, maxtime, df):
 
@@ -300,9 +302,9 @@ def limits_test(sensor, mintime, maxtime, df):
     
     
 
-# ##############################################################################
-# #######################   INTERNAL CONSISTENCY TEST   ########################
-# ##############################################################################
+#----------------------------------------------------------------------------#
+#----------------------   INTERNAL CONSISTENCY TEST   -----------------------#
+#----------------------------------------------------------------------------#
 
 # #here is where the physical limitiations of each variable will be pitted
 # #    against all other variables (where applicable) to determine validity,
@@ -323,108 +325,164 @@ def limits_test(sensor, mintime, maxtime, df):
 
 
 
-##############################################################################
-#######################   TEMPORAL CONSISTENCY TEST   ########################
-##############################################################################
+#----------------------------------------------------------------------------#
+#----------------------   TEMPORAL CONSISTENCY TEST   -----------------------#
+#----------------------------------------------------------------------------#
 
 #here is where we will flag any data blips (sharp, non-physical rises or
 #    decreases) or runs (extended periods of non-/low-variability) in data
 
-def temporal_test(sensor, mintime, maxtime, df):
+# def temporal_test(sensor, mintime, maxtime, df):
 
-    if sensor.lower() == "anemometer":
+#     if sensor.lower() == "anemometer":
         
-        #testing wind data requires both wind speed and direction data, so
-        #    both sensor's data must be read in if performing these tests
-        #beware of erroneously flagged calm winds (speed and direction); you may
-        #    have to set a threshold of wind speed such that there is a higher
-        #    tolerance for excessively low variability IF wind speeds are below
-        #    some statistically significant, predetermined threshold
+#         #testing wind data requires both wind speed and direction data, so
+#         #    both sensor's data must be read in if performing these tests
+#         #beware of erroneously flagged calm winds (speed and direction); you may
+#         #    have to set a threshold of wind speed such that there is a higher
+#         #    tolerance for excessively low variability IF wind speeds are below
+#         #    some statistically significant, predetermined threshold
         
-        #consider setting wind direction to zero for wind speeds less than X m/s???
-        #runs in wind direction are very likely the result of calm winds
+#         #consider setting wind direction to zero for wind speeds less than X m/s???
+#         #runs in wind direction are very likely the result of calm winds
         
-        #first, find 
+#         #first, find 
         
-    ############################### Blip Test ################################
+#     ############################### Blip Test ################################
     
-    #due to the turbulent nature of wind, blip testing for wind data is more
-    #    like scanning for abnormally high variability
+#     #due to the turbulent nature of wind, blip testing for wind data is more
+#     #    like scanning for abnormally high variability
 
-    #blip testing could be a two-tiered test comprised of a first pass that
-    #    flags any datum about which the consecutive forward-first
-    #    differences are non-zero and of opposite sign; the second pass can
-    #    consist of testing that flagged datum against a threshold
-    #    determined by a moving window of standard deviation calculations;
-    #    if the datum fails both tests, it is flagged; data that are flagged
-    #    by only one test should be manually inspected; consider a 5- to
-    #    10-minute window; this may flag some frontal passages for which you
-    #    may need to implement additional tests like checking other
-    #    variables (wind speed and/or direction change, humidity change,
-    #    pressure change, etc.)
+#     #blip testing could be a two-tiered test comprised of a first pass that
+#     #    flags any datum about which the consecutive forward-first
+#     #    differences are non-zero and of opposite sign; the second pass can
+#     #    consist of testing that flagged datum against a threshold
+#     #    determined by a moving window of standard deviation calculations;
+#     #    if the datum fails both tests, it is flagged; data that are flagged
+#     #    by only one test should be manually inspected; consider a 5- to
+#     #    10-minute window; this may flag some frontal passages for which you
+#     #    may need to implement additional tests like checking other
+#     #    variables (wind speed and/or direction change, humidity change,
+#     #    pressure change, etc.)
     
-    #in the interest of time, if a user specifies a subset of the dateset by
-    #    setting 'mintime' and 'maxtime' to something other than the very
-    #    first and last timestamp in the dataset, you may want to perform this
-    #    particular procedure on only the subset of data specified.
-    #NOTE: if you only apply this test to the specified subset, you may as
-    #      well do the same for all other procedures; this will also affect
-    #      your plans for the output file
-    #also try to test for jumps/steps using similar methods
+#     #in the interest of time, if a user specifies a subset of the dateset by
+#     #    setting 'mintime' and 'maxtime' to something other than the very
+#     #    first and last timestamp in the dataset, you may want to perform this
+#     #    particular procedure on only the subset of data specified.
+#     #NOTE: if you only apply this test to the specified subset, you may as
+#     #      well do the same for all other procedures; this will also affect
+#     #      your plans for the output file
+#     #also try to test for jumps/steps using similar methods
     
-    #precip data will likely need to be exempt from temporal consistency tests
-    #    since the very nature of precipitation means that there will
-    #    inevitably be long runs (like with no rain occurring) and blips
+#     #precip data will likely need to be exempt from temporal consistency tests
+#     #    since the very nature of precipitation means that there will
+#     #    inevitably be long runs (like with no rain occurring) and blips
     
     
-    ################################ Run Test ################################
+#     ################################ Run Test ################################
     
-    #must also test for runs in data; start by flagging values i such that the 
-    #    next adjacent value i+1 is equivalent to i. For every i+n value
-    #    thereafter that does not change, these values will be flagged. The
-    #    very first occurrence of the run will NOT be flagged
+#     #must also test for runs in data; start by flagging values i such that the 
+#     #    next adjacent value i+1 is equivalent to i. For every i+n value
+#     #    thereafter that does not change, these values will be flagged. The
+#     #    very first occurrence of the run will NOT be flagged
     
-    #due to the turbulent nature of wind, run testing for wind data is more
-    #    like scanning for abnormally low variability
+#     #due to the turbulent nature of wind, run testing for wind data is more
+#     #    like scanning for abnormally low variability
     
     
 
 
 
-# ##############################################################################
-# #######################   CLIMATOLOGICAL LIMITS TEST   #######################
-# ##############################################################################
+# #--------------------------------------------------------------------------#
+# #---------------------   CLIMATOLOGICAL LIMITS TEST   ---------------------#
+# #--------------------------------------------------------------------------#
 
 # def climo_test(sensor, mintime, maxtime, df):
 #
 #     #here might be the appropriate place to place an upper limit on the
 #     #    radiation sensor's readings
-    # #t_min = -80.  # this minimum is not used because the WMO Guide's
-    #                # minimum is well below the lower limit of this
-    #                # sensor
-    # t_max = 60.   # deg C
-    # p_min = 500.  # hPa
-    # p_max = 1080. # hPa
-    # a_min = 0.    # meters
-    # a_max = 8850. # meters (based on the elevation of the summit of Mt. Everest)
-    # #rh_min = 0.   # these limits are within or equivalent to those set by
-    #               # sensor specification, hence, not necessary
-    # #rh_max = 100. # " "
+    # #t_min = -80.   # this minimum is not used because the WMO Guide's
+    #                 # minimum is well below the lower limit of this
+    #                 # sensor
+    # t_max = 60.     # deg C
+    # p_min = 500.    # hPa
+    # p_max = 1080.   # hPa
+    # a_min = 0.      # meters
+    # a_max = 8850.   # meters (based on the elevation of the summit of Mt. Everest)
+    # #rh_min = 0.    # these limits are within or equivalent to those set by
+    #                 # sensor specification, hence, not necessary
+    # #rh_max = 100.  # " "
     
-    # si_min = 0.       # W m^-2
-    # si_max = 13000.    # W m^-2
+    # si_min = 0.     # W m^-2
+    # si_max = 13000. # W m^-2
     
-    # precip_min = 0.       # mm
-    # precip_max = 5.     # mm
+    # precip_min = 0. # mm
+    # precip_max = 5. # mm
     
     # #anemometer specs
-    # ws_min = 0.       # m/s
-    # ws_max = 75.      # m/s
+    # ws_min = 0.     # m/s
+    # ws_max = 75.    # m/s
     
     # #wind vane specs
-    # wd_min = 0.       # deg
-    # wd_max = 360.     # deg
+    # wd_min = 0.     # deg
+    # wd_max = 360.   # deg
 
+
+
+# ##############################################################################
+# ###########################   QUALITY ASSURANCE   ############################
+# ##############################################################################
+
+#here is the equivalent of '3D_main.py' for the quality assurance procedures
+
+#since performing QA requires that all data be read in, here we loop through
+#    each sensor's subfolder from the parental station folder, calling the
+#    appropriate reader.py function as we go. These data frames will be
+#    aligned by time and joined together into a single dataframe. Then, the
+#    varying QA procedures will be called: limits tests, temporal tests,
+#    internal tests, and finally, climatological tests. Based on the tests,
+#    the sensor/variable combo in question will be flagged, and all other data
+#    will be dropped from the dataframe
+#NOTE: the data returned may require manual inspection of the flagged data to
+#      
+
+
+##############################################################################
+###########################    READ IN FILE(S)    ############################
+##############################################################################
+
+#read in the dataframe by calling the function designed to read the data for
+#    the user-specified sensor; this is pre-processed data being read in so
+#    any sorting, removal of duplicate timestamps, data conversions, etc. is
+#    done before these dataframes are read into this program. Parameters such
+#    as averaging and averaging window are specified in THIS program and given
+#    to the other program's function so that parameters in the other program
+#    do not override the ones used for THIS [3D_main.py] program
+
+#loop through the parent folder
+
+if sensor.lower() == "bmp180" or sensor.lower() == "bmp280":
+    call_reader = reader.bmp(directory, wildcard)
+elif sensor.lower() == "htu21d":
+    call_reader = reader.htu21d(directory, wildcard)
+elif sensor.lower() == "mcp9808":
+    call_reader = reader.mcp9808(directory, wildcard)
+elif sensor.lower() == "si1145":
+    call_reader = reader.si1145(directory, wildcard)
+elif sensor.lower() == "rain":
+    call_reader = reader.rain_gauge(directory, units, wildcard)
+elif sensor.lower() == "wind_vane":
+    call_reader = reader.wind_vane(directory, wildcard)
+elif sensor.lower() == "anemometer":
+    call_reader = reader.anemometer(directory, units, wildcard)
+else:
+    #redundant, given that this parameter gets checked with the input checker;
+    #    consider it a fail-safe
+    print("Sensor name not recognized. Program exited...")
+    sys.exit()
+
+#df = reader."%s"(directory, wildcard) % sensor
+df = call_reader[0]
 
    
 if __name__ == "__main__":
