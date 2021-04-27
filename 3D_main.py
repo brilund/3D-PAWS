@@ -88,21 +88,26 @@ Created on Thu Jun  4 16:05:12 2020
 #
 #
 #How to Use:
-#    1. Change all variables in "USER OPTIONS" section to desired input
-#           sensor: bmp180, bmp280, htu21d, mcp9808, si1145, rain, anemometer, wind_vane
-#           directory
-#           save_dir
-#           wildcard
-#           site_ID
-#           var_name: temp_C, temp_F, rel_hum, alt, SLP_hPa, SLP_inHg,
+#    1. Change all variables in "USER OPTIONS" section to desired input; take
+#       note of the variable type required in brackets; you will be reminded
+#       of it in the USER OPTION(S) section
+#
+#           sensor: [string; case insensitive] bmp180, bmp280, htu21d, mcp9808,
+#                   si1145, rain, anemometer, wind_vane
+#           directory [string]
+#           save_dir [string]
+#           wildcard [string]
+#           site_ID [string]
+#           var_name: [string] temp_C, temp_F, rel_hum, alt, SLP_hPa, SLP_inHg,
 #                     station_P, vis, ir, uv, uvi (depends on sensor name)
-#           units: mm, inches, mps, kmph, mph, kts (depends on sensor name)
-#           averaged: True, static, resampled, False (simply uncomment the
+#           units: [string] mm, inches, mps, kmph, mph, kts (depends on sensor name)
+#           averaged: [string or boolean] True, static, resampled, False (simply uncomment the
 #                     option you want to use)
-#           mintime
-#           maxtime
-#           plot_opt: plotter (default), daily, weekly, monthly, "" (empty string; no plotting)
-#           tag
+#           mintime: [string] "" (empty string), YYYY-MM-DD HH:MM
+#           maxtime: [string] "" (empty string), YYYY-MM-DD HH:MM
+#           QA: [boolean] True, False
+#           plot_opt: [string] plotter (default), daily, weekly, monthly, "" (empty string; no plotting)
+#           tag [string]
 #    2. Run with "python 3D_main.py" in terminal, or open in
 #       Spyder and run from there.
 #
@@ -111,15 +116,21 @@ Created on Thu Jun  4 16:05:12 2020
 #           from) that will contain the subfolders for each sensor you want to
 #           read in. The full, absolute path to this folder should be what you
 #           give to the 'directory' variable
-#    2. The parent folder should contain the subfolders for each sensor
-#           you want to read in; it is critical that each sensor subfolder within
-#           each station folder follow the same naming convention (e.g. 'bmp'
-#           for the BMP180 or BMP280, 'winddir' for wind direction from the
-#           wind vane, etc.)
-#       NOTE: if there are two BMP folders in the parent folder (e.g. BMP180
+#    2. The parent folder should contain ONLY the subfolders for each sensor
+#           you want to read in, no additional files can be in this parent
+#           folder; it is critical that each sensor subfolder within each
+#           station folder follow the same naming convention (e.g. 'bmp' for
+#           the BMP180 or BMP280, 'winddir' for wind direction from the wind
+#           vane, etc.)
+#    3. If there are two BMP folders in the parent folder (e.g. BMP180
 #           and BMP280), you will either need to combine both folders into one,
 #           knowing that you will have a mixture of the two within your
 #           dataset, OR, eliminate one folder from the parent folder
+#       NOTE: it is important that the names of the folders within the parent
+#           folder (the folders that house the data files) make sense, in that,
+#           they contain a portion or all of the sensor name within the
+#           folder name itself (e.g. 'bmp' for the BMP180 or BMP280, 'winddir'
+#           for wind direction from the wind vane, etc.)
 #
 #
 #Example header from files --> no file header(s)!!! (this could change...)
@@ -193,7 +204,7 @@ sensor = "bmp280"
 
 #set the 'directory' variable to the absolute path where your data are stored;
 #    don't forget the trailing forward slash!
-directory = "/Users/blund/Documents/3D-PAWS/Data/CSA_3DPAWS01/wx_stn/windspd/"
+directory = "/Users/blund/Documents/3D-PAWS/Data/CSA_3DPAWS01/wx_stn/BMP280/"
 
 #specify the FULL file path to the directory in which to save your figures;
 #    don't forget to include the trailing forward slash!
@@ -203,7 +214,7 @@ save_dir = "/Users/blund/Documents/3D-PAWS/_my_code/figures/si1145_testing/"
 #    specified above in 'directory', set 'wildcard' to "*"; you may specify
 #    this to select a subset of data (e.g. "*2020*" to only read in files from
 #    2020)
-wildcard = "*"
+wildcard = "bmp*"
 
 #change this to the name of the site from which data are being plotted; this
 #    will be used in the plot title as well as the name of the figure
@@ -244,6 +255,8 @@ avg_window = 30
 #    time period
 mintime = ""
 maxtime = ""
+
+QA = False
 
 #set this to reflect the type of plots you want (i.e. daily, weekly, monthly,
 #    specified time frame); see the How To Use section for a list of accepted
@@ -293,11 +306,11 @@ elif sensor.lower() == "mcp9808":
 elif sensor.lower() == "si1145":
     call_reader = reader.si1145(directory, wildcard)
 elif sensor.lower() == "rain":
-    call_reader = reader.rain_gauge(directory, units, wildcard)
+    call_reader = reader.rain_gauge(directory, wildcard)
 elif sensor.lower() == "wind_vane":
     call_reader = reader.wind_vane(directory, wildcard)
 elif sensor.lower() == "anemometer":
-    call_reader = reader.anemometer(directory, units, wildcard)
+    call_reader = reader.anemometer(directory, wildcard)
 else:
     #redundant, given that this parameter gets checked with the input checker;
     #    consider it a fail-safe

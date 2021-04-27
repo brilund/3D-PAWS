@@ -31,6 +31,10 @@ Created on Thu Dec 10 15:20:44 2020
 
 import numpy as np
 import pandas as pd
+import glob
+import os
+import reader
+import sys
 
 
 
@@ -434,55 +438,209 @@ def limits_test(sensor, mintime, maxtime, df):
 # ##############################################################################
 
 #here is the equivalent of '3D_main.py' for the quality assurance procedures
+def QA_main(directory, df):
 
-#since performing QA requires that all data be read in, here we loop through
-#    each sensor's subfolder from the parental station folder, calling the
-#    appropriate reader.py function as we go. These data frames will be
-#    aligned by time and joined together into a single dataframe. Then, the
-#    varying QA procedures will be called: limits tests, temporal tests,
-#    internal tests, and finally, climatological tests. Based on the tests,
-#    the sensor/variable combo in question will be flagged, and all other data
-#    will be dropped from the dataframe
-#NOTE: the data returned may require manual inspection of the flagged data to
-#      
+    #since performing QA requires that all data be read in, here we loop through
+    #    each sensor's subfolder from the parental station folder, calling the
+    #    appropriate reader.py function as we go. These data frames will be
+    #    aligned by time and joined together into a single dataframe. Then, the
+    #    varying QA procedures will be called: limits tests, temporal tests,
+    #    internal tests, and finally, climatological tests. Based on the tests,
+    #    the sensor/variable combo in question will be flagged, and all other data
+    #    will be dropped from the dataframe
+    #NOTE: the data returned may require manual inspection of the flagged data to
+    #      
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    #this is the parent/station directory; it should be only one level up from
+    #    the directory given in '3D_main.py' for the 'directory' variable; the
+    #    "...[:-1]" removes the trailing forward slash, allowing for the
+    #    os.path.dirname to collect the folder path one level above
+    parent_dir = os.path.dirname(directory[:-1])
+    
+    #collect all the folders within the parent/station folder 'parent_dir' and
+    #    sort them
+    folder_list = sorted(glob.glob(parent_dir + "/*"))
+    
+    #check to see if there is more than 1 'bmp' folder in the parent/station
+    #    folder
+    if any("bmp" in folder.lower() for folder in folder_list):
+        print("There is more than 1 BMP folder in the parent folder. Combine \
+              your BMP folders, or remove one from the parent folder.")
+        sys.exit()
+        
+    #remove the sensor folder that was already read in via '3D_main.py'
+    folder_list.remove(directory[:-1])
+    
+    #sensor list should contain the names of the sensors you want to read in; you
+    #    must use only the valid options as defined in the "How to use:" section
+    #    above
+    #NOTE: it is critical that 'sensor_list' and 'folder_list' contain
+    #      precisely the same number of elements AND that the order of each is
+    #      preseved, meaning that if 'anemometer' is the first index of
+    #      'sensor_list', then 'windspd' should be the first index of 'folder_list'
+    sensor_list = ["bmp","htu21d","mcp9808","si1145","rain","wind_vane","anemometer"]
+    
+    sensor_list = []
+    for folder in folder_list:
+        sensor_list.append(folder[len(os.path.dirname(parent_dir)+1):])
+    
+    #remove the sensor from the list that was already read in
+    
+    
+    #zip up the contents of the sensor and folder lists, so that each sensor
+    #    name given by the 'sensor' variable is matched with its corresponding
+    #    folder containing the data for said sensor (set by 'folder_list')
+    tuple_lst = list(zip(folder_list,sensor_list))
+    
+    #need this because it is an input for the 'reader.py'
+    wildcard = "*"
+    
+
+    #how can I check/ensure that the order of file paths matches that of the
+    #    sensor list?????
+    
+    #check to see if there are the same number of sensor folders in the parent
+    #    folder as there are sensors in the 'sensor_list'
+    
+    
+    
+        
+    #within the parent station folder, loop through each sensor's data folder
+    for folder,sensor in tuple_lst:
+        full_path = folder + "/*"
+    
+           
+            
+        #--------------------------------------------------------------------------#
+        #-------------------------    READ IN FILE(S)    --------------------------#
+        #--------------------------------------------------------------------------#
+        
+        #call the appropriate function based on the sensor/variable name; need a bunch
+        #    'if' statments here
+        
+        
+        #read in the dataframe(s) by calling the function designed to read the data;
+        #    this is pre-processed data being read in so any sorting, removal of
+        #    duplicate timestamps, data conversions, etc. is done before these
+        #    dataframes are read into this program. Parameters such as averaging and
+        #    averaging window are specified in THIS program and given to the other
+        #    program's function so that parameters in the other program do not override
+        #    the ones used for THIS program
+        
+        if "bmp" in sensor.lower():
+            call_reader = reader.bmp(full_path, wildcard)
+        elif "htu" in sensor.lower():
+            call_reader = reader.htu21d(full_path, wildcard)
+        elif "mcp" in sensor.lower():
+            call_reader = reader.mcp9808(full_path, wildcard)
+        elif "1145" or "radiation" in sensor.lower():
+            call_reader = reader.si1145(full_path, wildcard)
+        elif "rain" or "tip" or "bucket" or "gauge" in sensor.lower():
+            call_reader = reader.rain_gauge(full_path, wildcard)
+        elif "vane" or "dir" or "direction" in sensor.lower():
+            call_reader = reader.wind_vane(full_path, wildcard)
+        elif "speed" or "spd" or "anemometer" in sensor.lower():
+            call_reader = reader.anemometer(full_path, wildcard)
+        else:
+            print("Cannot determine sensor type in the given folder names. Consider the following naming convention...\n")
+            print("'bmp' for the BMP180, BMP280, or BME sensors.")
+            print("'htu21d' for the HTU21D sensor.")
+            print("'mcp9808' for the MCP9808 sensor.")
+            print("'si1145' for the light / radiation sensor.")
+            print("'rain' for the rain gauge / tipping bucket.")
+            print("'winddir' for the wind vane")
+            print("'windspd' for the anemometer.")
+            print("Program exited...\n")
+            sys.exit()
+        
+        #df = reader."%s"(directory, wildcard) % sensor
+        df_temp = call_reader[0]
+        missing_reports_times = call_reader[1]
+        
+        
+        
+        ##############################################################################
+        #######################    CALL the QA PROCEDURES    #########################
+        ##############################################################################
+        
+        ''' For QA procedures requiring more than one sensor's dataset,
+            consider how you might handle instances such that there is no data'''
+        
+        # #call the quality assurance function
+        # call_QA = qa(sensor, mintime, maxtime, df)
+        
+        
+        ##############################################################################
+        #compute any statistical analytics here; this is a place holder and will call
+        #    a function that does all the work for us; some, if not all, this
+        #    information will get plugged into the creation of the output file
+        
+        
+        #change the column names to include the sensor name for the HTU, BMP,
+        #    and MCP so that we can distinguish between the 3 temperatures
+        
+        if sensor.lower() == "bmp180" or sensor.lower() == "bmp280":
+            #add sensor name to the all column names except for the 'time'
+            #    column
+            df_temp = df_temp.rename(columns={'temp_C':'%s_%s_temp' % (station_name,sensor),
+                                    'station_P':'%s_station_P' % station_name})
+            #drop extraneous columns from the dataframe
+            df_temp = df_temp.drop(columns=['temp_F', 'SLP_hPa', 'SLP_inHg', 'alt'])
+            
+        elif sensor.lower() == "htu21d":
+            #add sensor name to the all column names except for the 'time'
+            #    column
+            df_temp = df_temp.rename(columns={'temp_C':'%s_%s_temp' % (station_name,sensor),
+                                    'rel_hum':'%s_relhum' % station_name})
+            #drop extraneous columns from the dataframe
+            df_temp = df_temp.drop(columns=['temp_F'])
+        
+        elif sensor.lower() == "mcp9808":
+            #add sensor name to the all column names except for the 'time'
+            #    column
+            df_temp = df_temp.rename(columns={'temp_C':'%s_%s_temp' % (station_name,sensor)})
+            #drop extraneous columns from the dataframe
+            df_temp = df_temp.drop(columns=['temp_F'])
+            
+        else:
+            #for all other sensors, we need only add the station name to each
+            #    variable
+            for col_name in df_temp.columns:
+                if col_name == df_temp.columns[0]:
+                    pass #don't change the name of the 'time' column; this is
+                         #    used as the key to join each dataframe with the
+                         #    previous one
+                else:
+                    df_temp = df_temp.rename(columns={col_name:"%s_%s" % (station_name,col_name)})
+        
+        
+        #add the newly-read-in dataframe to the main exisiting dataframe; the
+        #    parameters set here create the UNION of the merged datasets, so
+        #    that no data is lost from either dataframe; this means that where
+        #    there is no overlap, the values are simply NaNs
+        df = df.join(df_temp.set_index('time'), on='time', how='outer', sort=True)
+        
+        #reset the indices so that they are in monotonically increasing order,
+        #    beginning with zero
+        df = df.set_index('time').sort_index().reset_index()
+        
+    ### END OF 'subfolder'/'sensor' LOOP ###
+    
 
 
-##############################################################################
-###########################    READ IN FILE(S)    ############################
-##############################################################################
 
-#read in the dataframe by calling the function designed to read the data for
-#    the user-specified sensor; this is pre-processed data being read in so
-#    any sorting, removal of duplicate timestamps, data conversions, etc. is
-#    done before these dataframes are read into this program. Parameters such
-#    as averaging and averaging window are specified in THIS program and given
-#    to the other program's function so that parameters in the other program
-#    do not override the ones used for THIS [3D_main.py] program
 
-#loop through the parent folder
 
-if sensor.lower() == "bmp180" or sensor.lower() == "bmp280":
-    call_reader = reader.bmp(directory, wildcard)
-elif sensor.lower() == "htu21d":
-    call_reader = reader.htu21d(directory, wildcard)
-elif sensor.lower() == "mcp9808":
-    call_reader = reader.mcp9808(directory, wildcard)
-elif sensor.lower() == "si1145":
-    call_reader = reader.si1145(directory, wildcard)
-elif sensor.lower() == "rain":
-    call_reader = reader.rain_gauge(directory, units, wildcard)
-elif sensor.lower() == "wind_vane":
-    call_reader = reader.wind_vane(directory, wildcard)
-elif sensor.lower() == "anemometer":
-    call_reader = reader.anemometer(directory, units, wildcard)
-else:
-    #redundant, given that this parameter gets checked with the input checker;
-    #    consider it a fail-safe
-    print("Sensor name not recognized. Program exited...")
-    sys.exit()
 
-#df = reader."%s"(directory, wildcard) % sensor
-df = call_reader[0]
 
    
 if __name__ == "__main__":

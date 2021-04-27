@@ -443,7 +443,7 @@ def bmp(directory, wildcard):
         
         if len(month) == 0: #can be any variable since now we know they are
         #    all equal in size/length
-            raise ValueError("No data. Program exiting. Check the directory path and/or the data files themselves.\n The # of columns in the data files may not match what is specified by the condition set in the READ IN FILE(S) section")
+            raise ValueError("No data. Program exiting.\nCheck the directory path and/or the data files themselves.\nThe # of columns in the data files may not match what is specified by the condition set in the READ IN FILE(S) section")
             
     else:
         #if all arrays do not have the same number of elements...
