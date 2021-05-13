@@ -38,11 +38,11 @@ import sys
 
 
 
-#----------------------------------------------------------------------------#
-#-----------------------------   LIMITS TEST   ------------------------------#
-#----------------------------------------------------------------------------#
+##############################################################################
+#############################    LIMITS TEST    ##############################
+##############################################################################
 
-def limits_test(sensor, mintime, maxtime, df):
+def limits_test(sensor, df):
 
     #performing simple limits test on the data to verify that measurements are
     #    within the sensor's specifications according to the sensor's manual
@@ -306,15 +306,15 @@ def limits_test(sensor, mintime, maxtime, df):
     
     
 
-#----------------------------------------------------------------------------#
-#----------------------   INTERNAL CONSISTENCY TEST   -----------------------#
-#----------------------------------------------------------------------------#
+##############################################################################
+######################    INTERNAL CONSISTENCY TEST    #######################
+##############################################################################
 
 # #here is where the physical limitiations of each variable will be pitted
 # #    against all other variables (where applicable) to determine validity,
 # #    for example, dewpoint cannot exceed temperature
 
-# def IC_test(sensor, mintime, maxtime, df):
+# def IC_test(sensor, df):
 #
 #     #set wind direction to zero if wind SPEED is below some threshold
 #
@@ -329,113 +329,113 @@ def limits_test(sensor, mintime, maxtime, df):
 
 
 
-#----------------------------------------------------------------------------#
-#----------------------   TEMPORAL CONSISTENCY TEST   -----------------------#
-#----------------------------------------------------------------------------#
+##############################################################################
+######################    TEMPORAL CONSISTENCY TEST    #######################
+##############################################################################
 
 #here is where we will flag any data blips (sharp, non-physical rises or
 #    decreases) or runs (extended periods of non-/low-variability) in data
 
-# def temporal_test(sensor, mintime, maxtime, df):
+def temporal_test(sensor, df):
 
-#     if sensor.lower() == "anemometer":
+    if sensor.lower() == "anemometer":
         
-#         #testing wind data requires both wind speed and direction data, so
-#         #    both sensor's data must be read in if performing these tests
-#         #beware of erroneously flagged calm winds (speed and direction); you may
-#         #    have to set a threshold of wind speed such that there is a higher
-#         #    tolerance for excessively low variability IF wind speeds are below
-#         #    some statistically significant, predetermined threshold
+        #testing wind data requires both wind speed and direction data, so
+        #    both sensor's data must be read in if performing these tests
+        #beware of erroneously flagged calm winds (speed and direction); you may
+        #    have to set a threshold of wind speed such that there is a higher
+        #    tolerance for excessively low variability IF wind speeds are below
+        #    some statistically significant, predetermined threshold
         
-#         #consider setting wind direction to zero for wind speeds less than X m/s???
-#         #runs in wind direction are very likely the result of calm winds
+        #consider setting wind direction to zero for wind speeds less than X m/s???
+        #runs in wind direction are very likely the result of calm winds
         
-#         #first, find 
+        #first, find 
         
-#     ############################### Blip Test ################################
+    ############################### Blip Test ################################
     
-#     #due to the turbulent nature of wind, blip testing for wind data is more
-#     #    like scanning for abnormally high variability
+    #due to the turbulent nature of wind, blip testing for wind data is more
+    #    like scanning for abnormally high variability
 
-#     #blip testing could be a two-tiered test comprised of a first pass that
-#     #    flags any datum about which the consecutive forward-first
-#     #    differences are non-zero and of opposite sign; the second pass can
-#     #    consist of testing that flagged datum against a threshold
-#     #    determined by a moving window of standard deviation calculations;
-#     #    if the datum fails both tests, it is flagged; data that are flagged
-#     #    by only one test should be manually inspected; consider a 5- to
-#     #    10-minute window; this may flag some frontal passages for which you
-#     #    may need to implement additional tests like checking other
-#     #    variables (wind speed and/or direction change, humidity change,
-#     #    pressure change, etc.)
+    #blip testing could be a two-tiered test comprised of a first pass that
+    #    flags any datum about which the consecutive forward-first
+    #    differences are non-zero and of opposite sign; the second pass can
+    #    consist of testing that flagged datum against a threshold
+    #    determined by a moving window of standard deviation calculations;
+    #    if the datum fails both tests, it is flagged; data that are flagged
+    #    by only one test should be manually inspected; consider a 5- to
+    #    10-minute window; this may flag some frontal passages for which you
+    #    may need to implement additional tests like checking other
+    #    variables (wind speed and/or direction change, humidity change,
+    #    pressure change, etc.)
     
-#     #in the interest of time, if a user specifies a subset of the dateset by
-#     #    setting 'mintime' and 'maxtime' to something other than the very
-#     #    first and last timestamp in the dataset, you may want to perform this
-#     #    particular procedure on only the subset of data specified.
-#     #NOTE: if you only apply this test to the specified subset, you may as
-#     #      well do the same for all other procedures; this will also affect
-#     #      your plans for the output file
-#     #also try to test for jumps/steps using similar methods
+    #in the interest of time, if a user specifies a subset of the dateset by
+    #    setting 'mintime' and 'maxtime' to something other than the very
+    #    first and last timestamp in the dataset, you may want to perform this
+    #    particular procedure on only the subset of data specified.
+    #NOTE: if you only apply this test to the specified subset, you may as
+    #      well do the same for all other procedures; this will also affect
+    #      your plans for the output file
+    #also try to test for jumps/steps using similar methods
     
-#     #precip data will likely need to be exempt from temporal consistency tests
-#     #    since the very nature of precipitation means that there will
-#     #    inevitably be long runs (like with no rain occurring) and blips
-    
-    
-#     ################################ Run Test ################################
-    
-#     #must also test for runs in data; start by flagging values i such that the 
-#     #    next adjacent value i+1 is equivalent to i. For every i+n value
-#     #    thereafter that does not change, these values will be flagged. The
-#     #    very first occurrence of the run will NOT be flagged
-    
-#     #due to the turbulent nature of wind, run testing for wind data is more
-#     #    like scanning for abnormally low variability
+    #precip data will likely need to be exempt from temporal consistency tests
+    #    since the very nature of precipitation means that there will
+    #    inevitably be long runs (like with no rain occurring) and blips
     
     
-
-
-
-# #--------------------------------------------------------------------------#
-# #---------------------   CLIMATOLOGICAL LIMITS TEST   ---------------------#
-# #--------------------------------------------------------------------------#
-
-# def climo_test(sensor, mintime, maxtime, df):
-#
-#     #here might be the appropriate place to place an upper limit on the
-#     #    radiation sensor's readings
-    # #t_min = -80.   # this minimum is not used because the WMO Guide's
-    #                 # minimum is well below the lower limit of this
-    #                 # sensor
-    # t_max = 60.     # deg C
-    # p_min = 500.    # hPa
-    # p_max = 1080.   # hPa
-    # a_min = 0.      # meters
-    # a_max = 8850.   # meters (based on the elevation of the summit of Mt. Everest)
-    # #rh_min = 0.    # these limits are within or equivalent to those set by
-    #                 # sensor specification, hence, not necessary
-    # #rh_max = 100.  # " "
+    ################################ Run Test ################################
     
-    # si_min = 0.     # W m^-2
-    # si_max = 13000. # W m^-2
+    #must also test for runs in data; start by flagging values i such that the 
+    #    next adjacent value i+1 is equivalent to i. For every i+n value
+    #    thereafter that does not change, these values will be flagged. The
+    #    very first occurrence of the run will NOT be flagged
     
-    # precip_min = 0. # mm
-    # precip_max = 5. # mm
+    #due to the turbulent nature of wind, run testing for wind data is more
+    #    like scanning for abnormally low variability
     
-    # #anemometer specs
-    # ws_min = 0.     # m/s
-    # ws_max = 75.    # m/s
     
-    # #wind vane specs
-    # wd_min = 0.     # deg
-    # wd_max = 360.   # deg
 
 
 
-# ##############################################################################
-# ###########################   QUALITY ASSURANCE   ############################
-# ##############################################################################
+##############################################################################
+######################    CLIMATOLOGICAL LIMITS TEST    ######################
+##############################################################################
+
+def climo_test(sensor, df):
+
+    #here might be the appropriate place to place an upper limit on the
+    #    radiation sensor's readings
+    #t_min = -80.   # this minimum is not used because the WMO Guide's
+                    # minimum is well below the lower limit of this
+                    # sensor
+    t_max = 60.     # deg C
+    p_min = 500.    # hPa
+    p_max = 1080.   # hPa
+    a_min = 0.      # meters
+    a_max = 8850.   # meters (based on the elevation of the summit of Mt. Everest)
+    #rh_min = 0.    # these limits are within or equivalent to those set by
+                    # sensor specification, hence, not necessary
+    #rh_max = 100.  # " "
+    
+    si_min = 0.     # W m^-2
+    si_max = 13000. # W m^-2
+    
+    precip_min = 0. # mm
+    precip_max = 5. # mm
+    
+    #anemometer specs
+    ws_min = 0.     # m/s
+    ws_max = 75.    # m/s
+    
+    #wind vane specs
+    wd_min = 0.     # deg
+    wd_max = 360.   # deg
+
+
+
+##############################################################################
+##########################    QUALITY ASSURANCE    ###########################
+##############################################################################
 
 #here is the equivalent of '3D_main.py' for the quality assurance procedures
 def QA_main(directory, df):
@@ -472,28 +472,29 @@ def QA_main(directory, df):
     
     #check to see if there is more than 1 'bmp' folder in the parent/station
     #    folder
-    if any("bmp" in folder.lower() for folder in folder_list):
-        print("There is more than 1 BMP folder in the parent folder. Combine \
-              your BMP folders, or remove one from the parent folder.")
+    if len(['bmp' for folder in folder_list if 'bmp' in folder.lower()]) > 1:
+        print("There is more than 1 BMP folder in the parent folder. Combine your BMP folders, or remove one from the parent folder.")
         sys.exit()
         
     #remove the sensor folder that was already read in via '3D_main.py'
     folder_list.remove(directory[:-1])
     
-    #sensor list should contain the names of the sensors you want to read in; you
-    #    must use only the valid options as defined in the "How to use:" section
-    #    above
-    #NOTE: it is critical that 'sensor_list' and 'folder_list' contain
-    #      precisely the same number of elements AND that the order of each is
-    #      preseved, meaning that if 'anemometer' is the first index of
-    #      'sensor_list', then 'windspd' should be the first index of 'folder_list'
-    sensor_list = ["bmp","htu21d","mcp9808","si1145","rain","wind_vane","anemometer"]
-    
+    #initiate the sensor list
     sensor_list = []
+    #collect the sensor name from each folder path in folder_list
     for folder in folder_list:
-        sensor_list.append(folder[len(os.path.dirname(parent_dir)+1):])
-    
-    #remove the sensor from the list that was already read in
+        sensor_list.append(folder[len(parent_dir)+1:]) 
+        
+    #check to see if there are the same number of sensor folders in the parent
+    #    folder as there are sensors in the 'sensor_list'
+    #NOTE: the odds of this condition ever arising should be next to none
+    #    since the sensor_list is generated from the folder_list, but this
+    #    checker is here just in case.
+    if len(sensor_list) != len(folder_list):
+        raise ValueError("Number of sensors is not equal to the number of folders.")
+        
+    else:
+        pass
     
     
     #zip up the contents of the sensor and folder lists, so that each sensor
@@ -504,25 +505,23 @@ def QA_main(directory, df):
     #need this because it is an input for the 'reader.py'
     wildcard = "*"
     
-
-    #how can I check/ensure that the order of file paths matches that of the
+    #check/ensure that the order of file paths matches that of the
     #    sensor list?????
-    
-    #check to see if there are the same number of sensor folders in the parent
-    #    folder as there are sensors in the 'sensor_list'
-    
-    
-    
+    #REPLY: don't need to check this with the current method I have because
+    #    the sensor list is generated from the folder_list so by default, they
+    #    they will be in the same
         
     #within the parent station folder, loop through each sensor's data folder
     for folder,sensor in tuple_lst:
+        
+        #add a forward slash and wildcard character to the directory path
         full_path = folder + "/*"
     
            
             
-        #--------------------------------------------------------------------------#
-        #-------------------------    READ IN FILE(S)    --------------------------#
-        #--------------------------------------------------------------------------#
+        #--------------------------------------------------------------------#
+        #-----------------------    READ IN FILE(S)   -----------------------#
+        #--------------------------------------------------------------------#
         
         #call the appropriate function based on the sensor/variable name; need a bunch
         #    'if' statments here
@@ -568,59 +567,40 @@ def QA_main(directory, df):
         
         
         
-        ##############################################################################
-        #######################    CALL the QA PROCEDURES    #########################
-        ##############################################################################
+        #--------------------------------------------------------------------#
+        #----------------    ADJUST COLUMN NAMES & MERGE    -----------------#
+        #--------------------------------------------------------------------#
         
         ''' For QA procedures requiring more than one sensor's dataset,
             consider how you might handle instances such that there is no data'''
-        
-        # #call the quality assurance function
-        # call_QA = qa(sensor, mintime, maxtime, df)
-        
-        
-        ##############################################################################
-        #compute any statistical analytics here; this is a place holder and will call
-        #    a function that does all the work for us; some, if not all, this
-        #    information will get plugged into the creation of the output file
         
         
         #change the column names to include the sensor name for the HTU, BMP,
         #    and MCP so that we can distinguish between the 3 temperatures
         
-        if sensor.lower() == "bmp180" or sensor.lower() == "bmp280":
+        if sensor.lower() == "bmp180" or "bmp280":
             #add sensor name to the all column names except for the 'time'
             #    column
-            df_temp = df_temp.rename(columns={'temp_C':'%s_%s_temp' % (station_name,sensor),
-                                    'station_P':'%s_station_P' % station_name})
-            #drop extraneous columns from the dataframe
-            df_temp = df_temp.drop(columns=['temp_F', 'SLP_hPa', 'SLP_inHg', 'alt'])
+            df_temp = df_temp.rename(columns={'temp_C':'%s_tempC' % sensor,
+                                              'temp_F':'%s_tempF' % sensor})
             
         elif sensor.lower() == "htu21d":
             #add sensor name to the all column names except for the 'time'
             #    column
-            df_temp = df_temp.rename(columns={'temp_C':'%s_%s_temp' % (station_name,sensor),
-                                    'rel_hum':'%s_relhum' % station_name})
-            #drop extraneous columns from the dataframe
-            df_temp = df_temp.drop(columns=['temp_F'])
+            df_temp = df_temp.rename(columns={'temp_C':'%s_tempC' % sensor,
+                                              'rel_hum':'%s_relhum' % sensor,
+                                              'temp_F':'%s_tempF' % sensor})
         
         elif sensor.lower() == "mcp9808":
             #add sensor name to the all column names except for the 'time'
             #    column
-            df_temp = df_temp.rename(columns={'temp_C':'%s_%s_temp' % (station_name,sensor)})
-            #drop extraneous columns from the dataframe
-            df_temp = df_temp.drop(columns=['temp_F'])
+            df_temp = df_temp.rename(columns={'temp_C':'%s_tempC' % sensor,
+                                              'temp_F':'%s_tempF' % sensor})
             
         else:
-            #for all other sensors, we need only add the station name to each
-            #    variable
-            for col_name in df_temp.columns:
-                if col_name == df_temp.columns[0]:
-                    pass #don't change the name of the 'time' column; this is
-                         #    used as the key to join each dataframe with the
-                         #    previous one
-                else:
-                    df_temp = df_temp.rename(columns={col_name:"%s_%s" % (station_name,col_name)})
+            #no other sensors share variable names so we don't need to add the
+            #    sensor name in front of the rest of the variables
+            pass
         
         
         #add the newly-read-in dataframe to the main exisiting dataframe; the
@@ -636,10 +616,19 @@ def QA_main(directory, df):
     ### END OF 'subfolder'/'sensor' LOOP ###
     
 
+    #------------------------------------------------------------------------#
+    #---------------------    CALL the QA PROCEDURES    ---------------------#
+    #------------------------------------------------------------------------#
 
+    ############################# Limits Test ################################
 
-
-
+    df = limits_test(df)
+    
+    df = IC_test(df)
+    
+    df = temporal_test(df)
+    
+    df = climo_test(df)
 
 
    

@@ -187,7 +187,7 @@ import reader
 from input_checker import input_checker
 from time_checker import time_checker
 from data_smoother import smoothing
-import quality_assurance as QA
+import quality_assurance as quality
 import plotter as pltr
 
 
@@ -256,7 +256,15 @@ avg_window = 30
 mintime = ""
 maxtime = ""
 
+#this variable toggles the use of the quality assurance procedure; set to
+#    False for no quality assurance test to be performed; set to True for the
+#    opposite
 QA = False
+
+#this variable toggles the data conversion procedure; when set to True, a 
+#    number of other input options will be ignored and the data read in will
+#    be converted to Little_R format
+convert = False
 
 #set this to reflect the type of plots you want (i.e. daily, weekly, monthly,
 #    specified time frame); see the How To Use section for a list of accepted
@@ -352,29 +360,32 @@ if mintime != 0 or maxtime != df.index[-1]:
 
 
 
-# ##############################################################################
-# ##########################    QUALITY ASSURANCE    ###########################
-# ##############################################################################
+##############################################################################
+##########################    QUALITY ASSURANCE    ###########################
+##############################################################################
 
-# #Decide in this section (using some newly added user options) to...
-# #    1) perform any quality assurance tests, and if yes...
-# #    2) ... whether or not to remove flagged data points (convert them to NaNs???)
-# #Because the use of quality assurance procedures requires you to read in ALL
-# #    data, consider adding additional calls for the 'reader' functions within
-# #    the quality assurance function such that the final dataframe returned is
-# #    assured of quality based on ALL the data but contains only the data in
-# #    specified by the user (e.g. BMP temperature is what I want to plot, but
-# #    may require an assessment of other parameters from other sensors to
-# #    determine its quality)
-# #Alternatively, I could simply modify the entire 3D_main such that first it
-# #    checks to see if QA procedures are requested, if so, then check for a
-# #    few specifics, and loop through all the folders, reading in all the data
-# #    and performing the QA. If not, carry on with the original, un-modified
-# #    version of this code
+#Decide in this section (using some newly added user options) to...
+#    1) perform any quality assurance tests, and if yes...
+#    2) ... whether or not to remove flagged data points (convert them to NaNs???)
+#Because the use of quality assurance procedures requires you to read in ALL
+#    data, consider adding additional calls for the 'reader' functions within
+#    the quality assurance function such that the final dataframe returned is
+#    assured of quality based on ALL the data but contains only the data in
+#    specified by the user (e.g. BMP temperature is what I want to plot, but
+#    may require an assessment of other parameters from other sensors to
+#    determine its quality)
+#Alternatively, I could simply modify the entire 3D_main such that first it
+#    checks to see if QA procedures are requested, if so, then check for a
+#    few specifics, and loop through all the folders, reading in all the data
+#    and performing the QA. If not, carry on with the original, un-modified
+#    version of this code
 
-# #call the quality assurance function; since it only returns the flagged
-# #    dataframe, this can be called "df"
-# df = QA.limits_test(sensor, mintime, maxtime, df)
+#call the quality assurance function; since it only returns the flagged
+#    dataframe, this can be called "df"
+if QA:
+    df = quality.QA_main(directory, sensor, mintime, maxtime, df)
+else:
+    pass
 
 
 
