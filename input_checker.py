@@ -57,7 +57,7 @@ Created on Thu Nov  5 15:13:43 2020
 #       ... or...
 #       b) call_plotter = pltr.plotter(mintime, maxtime, df)
 #
-#    4. Run the parent program within terminal (e.g. "python main.py"),
+#    4. Run the parent program within terminal (e.g. "python 3D_main.py"),
 #       or open the parent program in Spyder and run from there.
 #
 #

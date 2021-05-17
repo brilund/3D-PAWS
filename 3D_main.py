@@ -142,8 +142,8 @@ Created on Thu Jun  4 16:05:12 2020
 #NOTES: the y-axis range for most variables will be site-dependent. These are
 #       currently hard-coded in the plotting section for each variable. If you
 #       see no data with the first attempt to plot a variable, try commenting
-#       out the following line in the 'plotter.py' program for the appropriate
-#       varaible:
+#       out the 'set_ylim' line in the 'plotter.py' program for the
+#       appropriate variable:
 #
 #       #set y-axis limits/range
 #       ax.set_ylim(900., 1100.)
