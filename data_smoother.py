@@ -89,7 +89,7 @@ import sys
 occurs, you will need to account for 'var_name' when creating the new column
 in the dataframe '''
 
-def smoothing(averaged, avg_window, df):
+def smoothing(averaged, avg_window, df, plot_opt):
     
     #tell the user that the function was called
     print("------------------------------------------------------------------\n")
@@ -102,40 +102,47 @@ def smoothing(averaged, avg_window, df):
     #    longer time series), or plotting a lower density of data (useful for
     #    longer time series)
     if averaged == True:
-        #computing the running average of wind speed based on the user-defined
-        #    averaging window; add this as a new column in the existing dataframe
-        #    and shift the computed values back in time X-1 minutes where X is the
-        #    user-defined averaging window, so that the value computed over that
-        #    duration is now valid for the beginning of the time frame (i.e. a 10-
-        #    min running average beginning at 08:00 will be valid [plotted] for
-        #    [at] 08:00); the iloc[:,1] tells it to only go this for all values
-        #    in the second column (identified by the first index)
-        print("Plotting %s-min running averaged data..." % avg_window)
-        df['windspd_avg'] = df.iloc[:,1].rolling(window=avg_window).mean().shift(-(avg_window-1))
+        if plot_opt != "":
+            #computing the running average of wind speed based on the user-defined
+            #    averaging window; add this as a new column in the existing dataframe
+            #    and shift the computed values back in time X-1 minutes where X is the
+            #    user-defined averaging window, so that the value computed over that
+            #    duration is now valid for the beginning of the time frame (i.e. a 10-
+            #    min running average beginning at 08:00 will be valid [plotted] for
+            #    [at] 08:00); the iloc[:,1] tells it to only go this for all values
+            #    in the second column (identified by the first index)
+            print("Plotting %s-min running averaged data..." % avg_window)
+            df['windspd_avg'] = df.iloc[:,1].rolling(window=avg_window).mean().shift(-(avg_window-1))
+        
+        else:
+            df['windspd_avg'] = df.iloc[:,1].rolling(window=avg_window).mean().shift(-(avg_window-1))
         
     elif averaged == False:
-        #if averaging is set to False, then do nothing and continue on your merry
-        #    way
-        print("Plotting raw data...")
-        pass
+        if plot_opt != "":
+            #if averaging is set to False, then do nothing and continue on your merry
+            #    way
+            print("Plotting raw data...")
+            pass
     
     elif averaged == "static":
-        #"static" average based on the user-defined averaging window but with a
-        #    temporal resolution equivalent to the averaging window; this line is
-        #    exactly the same as with the running average, but we will select every
-        #    nth data point (beginning with the first) when plotting since that is
-        #    equivalent to computing the static average
-        print("Plotting %s-min static averaged data..." % avg_window)
-        df['windspd_avg'] = df.iloc[:,1].rolling(window=avg_window).mean().shift(-(avg_window-1))
+        if plot_opt != "":
+            #"static" average based on the user-defined averaging window but with a
+            #    temporal resolution equivalent to the averaging window; this line is
+            #    exactly the same as with the running average, but we will select every
+            #    nth data point (beginning with the first) when plotting since that is
+            #    equivalent to computing the static average
+            print("Plotting %s-min static averaged data..." % avg_window)
+            df['windspd_avg'] = df.iloc[:,1].rolling(window=avg_window).mean().shift(-(avg_window-1))
         
-        #only returning the dataframe here because it gets modified
-        return df
+        else:
+            df['windspd_avg'] = df.iloc[:,1].rolling(window=avg_window).mean().shift(-(avg_window-1))
     
     elif averaged == "resampled":
-        #resampling; there is no need to do anything here, but the "resampled"
-        #    option will plot every nth raw data point where 'n' is the averaging
-        #    window ("avg_window") set by the user
-        print("Plotting every %s data points (minutes)..." % avg_window)
+        if plot_opt != "":
+            #resampling; there is no need to do anything here, but the "resampled"
+            #    option will plot every nth raw data point where 'n' is the averaging
+            #    window ("avg_window") set by the user
+            print("Plotting every %s data points (minutes)..." % avg_window)
     
     #NOTE: we need not account for the potential of "averaged" not being an
     #      accepted option because the input_checker will handle that exception

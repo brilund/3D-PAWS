@@ -290,12 +290,12 @@ def time_checker(mintime, maxtime, plot_opt, df):
         #    the time frameset by the user is greater than the required 28 
         #    days, but does not contain a first-of-the-month date/time
         #    (e.g. mintime = "2017-10-01 00:01" and maxtime = "2017-10-28 00:01")
-        return mintime, maxtime, plot_opt, df, missing_report_times
+        return mintime, maxtime, plot_opt, missing_report_times
     
     else:
         #don't return missing_report_times if 'mintime' and 'maxtime' are set
         #    as empty stings, indicating use of the WHOLE dataset
-        return mintime, maxtime, plot_opt, df
+        return mintime, maxtime, plot_opt
     
 
 

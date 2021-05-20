@@ -250,6 +250,12 @@ def convert(directory, df):
     
     #truncate/clip the dataset by the 'mintime' and 'maxtime' set by the user
     
+    ''' Because not all sensors have the same amount of data, and the
+        dataframe gets re-indexed to accommodate this fact, we must keep a
+        record of the specific datetimeindex (not just the indices associated
+        with those datetimeindices) in order to accurately clip the dataset
+        where intended by the user-defined 'mintime' and 'maxtime' '''
+    
     #check first whether there are ANY data within the timeframe specified
     #if any df[mintime:maxtime]:
     

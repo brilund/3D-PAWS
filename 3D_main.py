@@ -330,15 +330,12 @@ maxtime = check_time[1]
 #plotting option
 plot_opt = check_time[2]
 
-#dataframe, if 'mintime' and/or 'maxtime' were not in the dataset
-df = check_time[3]
-
 #time_checker will only spit out a list of missing report times within the
 #    user-defined time frame, if the time frame is set as anything other than
 #    the entire dataset
 if mintime != 0 or maxtime != df.index[-1]:
     #timestamps for missing reports WITHIN THE USER-DEFINED TIME FRAME
-    tf_missing_report_times = check_time[4]
+    tf_missing_report_times = check_time[3]
 
 
 
@@ -386,7 +383,7 @@ time = pd.to_datetime(np.array(df.time))
 #right now, the anemometer is the only sensor that has the ability for
 #    smoothing/averaging
 if sensor == "anemometer":
-    df = smoothing(averaged, avg_window, df)
+    df = smoothing(averaged, avg_window, df, plot_opt)
 
 #data conversions are computed in the plotter functions for wind speed and rain
 
