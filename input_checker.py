@@ -132,7 +132,7 @@ def _smooth_params(averaged, avg_window):
 ############################### Input Checker ################################
 
 #call this function to check the more critical user inputs
-def input_checker(sensor, var_name, units, averaged, avg_window, convert):
+def input_checker(sensor, var_name, units, averaged, avg_window, reformat):
     
     #tell the user that the function was called
     print("------------------------------------------------------------------\n")
@@ -147,7 +147,7 @@ def input_checker(sensor, var_name, units, averaged, avg_window, convert):
     #    averaging parameters ('averaged' and 'avg_window') so we can ignore
     #    those variables no matter what they are, and jump right to the
     #    reader function
-    if convert == True:
+    if reformat == True:
         #need only check that the sensor name is correct for the reader
         #    function later on
         if sensor.lower() in sensor_list:
@@ -161,7 +161,7 @@ def input_checker(sensor, var_name, units, averaged, avg_window, convert):
                 print(sensor)
             sys.exit()
         
-    elif convert == False:
+    elif reformat == False:
         
         ##################### Check Sensor & Variable/Units ######################
         
@@ -286,7 +286,7 @@ def input_checker(sensor, var_name, units, averaged, avg_window, convert):
             sys.exit()
     
     else:
-        print("'covert' option not recognized (must be either True or False)")
+        print("'reformat' option not recognized (must be either True or False)")
         sys.exit()
     
     

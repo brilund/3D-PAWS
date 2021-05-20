@@ -198,16 +198,6 @@ def time_checker(mintime, maxtime, plot_opt, df):
             mintime = time.get_loc(pd.to_datetime(mintime))
             maxtime = time.get_loc(pd.to_datetime(maxtime))
             
-        # #truncate the dataframe based on the user-defined time frame
-        # df = df.iloc[mintime:maxtime]
-        
-        #duration of time to truncate by as set by 'mintime' and 'maxtime'
-        time_full = pd.date_range(start=df.time[mintime], end=df.time[maxtime],freq='min')
-        
-        #truncate the dataset by the specified time frame; note that this will
-        #    return a dataframe full of NaNs if the data read in does not fall
-        #    within the 'mintime' and 'maxtime'
-        df = df.set_index('time').reindex(pd.Index(time_full, name='time')).reset_index()
         
         #if using the daily, weekly, or monthly plotter, check that the interval
         #    of time determined by the user-defined range limits is at least 1 day,
@@ -256,58 +246,58 @@ def time_checker(mintime, maxtime, plot_opt, df):
             pass
     
     
-    # ######################### Uptime within Time Frame ########################### 
+    ######################### Uptime within Time Frame ########################### 
     
-    # #calculate the total uptime based on the number of missing reports,
-    # #    but within the time frame ('mintime' and 'maxtime') set by the user; must
-    # #    add 1 to 'maxtime' because indexing ranges in python exclude the very
-    # #    last index from the range given (e.g. indexing from [0:10] will go from
-    # #    the zeroeth index to the 9th index, excluding the 10th index)
-    # #NOTE: if 'mintime' and 'maxtime' are set such that the entire dataset is
-    # #      being plotted, the uptime calculated below should be the same as that
-    # #      calculated above in the "Filling gaps with NaNs" subsection
-    # if mintime != 0 or maxtime != df.index[-1]:
+    #calculate the total uptime based on the number of missing reports,
+    #    but within the time frame ('mintime' and 'maxtime') set by the user; must
+    #    add 1 to 'maxtime' because indexing ranges in python exclude the very
+    #    last index from the range given (e.g. indexing from [0:10] will go from
+    #    the zeroeth index to the 9th index, excluding the 10th index)
+    #NOTE: if 'mintime' and 'maxtime' are set such that the entire dataset is
+    #      being plotted, the uptime calculated below should be the same as that
+    #      calculated above in the "Filling gaps with NaNs" subsection
+    if mintime != 0 or maxtime != df.index[-1]:
     
-    #     #this is a pandas series containing the indices WITHIN THE TIME FRAME
-    #     #    such that the corresponding data value is NaN (i.e. missing)
-    #     missing_reports_idx = df.index[mintime:maxtime+1][df[df.columns[1]][mintime:maxtime+1].isna()==True]
+        #this is a pandas series containing the indices WITHIN THE TIME FRAME
+        #    such that the corresponding data value is NaN (i.e. missing)
+        missing_reports_idx = df.index[mintime:maxtime+1][df[df.columns[1]][mintime:maxtime+1].isna()==True]
         
-    #     #the actual timestamps for missing data records (NaNs)
-    #     missing_report_times = pd.to_datetime(np.array(df.time[missing_reports_idx]))
+        #the actual timestamps for missing data records (NaNs)
+        missing_report_times = pd.to_datetime(np.array(df.time[missing_reports_idx]))
         
-    #     #this is the total sum WITHIN THE TIME FRAME such that the data are
-    #     #    NaNs
-    #     missing_reports_sum = df[df.columns[1]][mintime:maxtime+1].isna().sum()
+        #this is the total sum WITHIN THE TIME FRAME such that the data are
+        #    NaNs
+        missing_reports_sum = df[df.columns[1]][mintime:maxtime+1].isna().sum()
         
-    #     #total amount of time WITHIN THE TIME FRAME
-    #     total = pd.Timedelta(len(df.index[mintime:maxtime+1]), unit='m')
+        #total amount of time WITHIN THE TIME FRAME
+        total = pd.Timedelta(len(df.index[mintime:maxtime+1]), unit='m')
         
-    #     #total amount of uptime WITHIN THE TIME FRAME
-    #     uptime = pd.Timedelta((len(df.index[mintime:maxtime+1]) - missing_reports_sum), unit='m')
+        #total amount of uptime WITHIN THE TIME FRAME
+        uptime = pd.Timedelta((len(df.index[mintime:maxtime+1]) - missing_reports_sum), unit='m')
         
-    #     #total uptime percentage WITHIN THE TIME FRAME
-    #     uptime_percent = round((1 - (float(missing_reports_sum) / float(len(df[mintime:maxtime+1])))) * 100., 1)
-    #     print("Uptime during the time frame is %s out of %s (%s%%).\n" % (uptime,total,uptime_percent))
+        #total uptime percentage WITHIN THE TIME FRAME
+        uptime_percent = round((1 - (float(missing_reports_sum) / float(len(df[mintime:maxtime+1])))) * 100., 1)
+        print("Uptime during the time frame is %s out of %s (%s%%).\n" % (uptime,total,uptime_percent))
         
     
-    # ##########################################################################
+    ##########################################################################
 
-    #     print("------------------------------------------------------------------")
+        print("------------------------------------------------------------------")
         
-    #     #will have to return additional variables once the OUTPUT option is
-    #     #    implemented because some relevant output information is 
-    #     #    calculated here; must also return 'plot_opt' in the event that
-    #     #    the time frameset by the user is greater than the required 28 
-    #     #    days, but does not contain a first-of-the-month date/time
-    #     #    (e.g. mintime = "2017-10-01 00:01" and maxtime = "2017-10-28 00:01")
-    #     return mintime, maxtime, plot_opt, missing_report_times
+        #will have to return additional variables once the OUTPUT option is
+        #    implemented because some relevant output information is 
+        #    calculated here; must also return 'plot_opt' in the event that
+        #    the time frameset by the user is greater than the required 28 
+        #    days, but does not contain a first-of-the-month date/time
+        #    (e.g. mintime = "2017-10-01 00:01" and maxtime = "2017-10-28 00:01")
+        return mintime, maxtime, plot_opt, df, missing_report_times
     
-    # else:
-    #     #don't return missing_report_times if 'mintime' and 'maxtime' are set
-    #     #    as empty stings, indicating use of the WHOLE dataset
-    #     return mintime, maxtime, plot_opt
+    else:
+        #don't return missing_report_times if 'mintime' and 'maxtime' are set
+        #    as empty stings, indicating use of the WHOLE dataset
+        return mintime, maxtime, plot_opt, df
     
-    return mintime, maxtime, plot_opt, df
+
 
 if __name__ == "__main__":
     time_checker()
