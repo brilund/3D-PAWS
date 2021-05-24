@@ -282,6 +282,14 @@ tag = ""
 ##############################################################################
 ############################    VERIFY INPUT    ##############################
 ##############################################################################
+''' In order to some day eliminate the need to specify the sensor name, I
+    could have the user only specify a variable name (which will invariably
+    include the sensor name if it is temperature or humidity since multiple
+    sensors have the ability to measure these), that gets sent to the
+    input_checker, where, based on the variable name, the function determines
+    the appropriate sensor name, 'sensor' gets returned, then we can use
+    'sensor' to call the appropriate reader function!!! '''
+
 
 #call the input checker function to verify a number of user inputs, namely,
 check_inputs = input_checker(sensor, var_name, units, averaged, avg_window)

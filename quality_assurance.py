@@ -43,6 +43,11 @@ import sys
 ##############################################################################
 
 def limits_test(sensor, df):
+    
+    ''' Since this entire program reads in all data from a single station,
+        and some procedures will rely on the quality of other varialbes, we
+        must rewrite this section to perform the limits test on ALL variables.
+        It could be a loop through all column names'''
 
     #performing simple limits test on the data to verify that measurements are
     #    within the sensor's specifications according to the sensor's manual
