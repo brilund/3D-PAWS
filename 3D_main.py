@@ -373,9 +373,9 @@ else:
 ###########################    DATA PROCESSING    ############################
 ##############################################################################
 
-#create a 'time' variable from the 'time' column in the DataFrame as a
-#   DatetimeIndex array; this will be used for other calculations/test below
-time = pd.to_datetime(np.array(df.time))
+# #create a 'time' variable from the 'time' column in the DataFrame as a
+# #   DatetimeIndex array; this will be used for other calculations/test below
+# time = pd.to_datetime(np.array(df.time))
 
 ''' Don't compute analytics on averaged / smoothed data, and don't smooth
     analytic products '''

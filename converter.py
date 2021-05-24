@@ -248,6 +248,20 @@ def convert(directory, df):
     ### END OF 'subfolder'/'sensor' LOOP ###
     
     
+    
+    #------------------------------------------------------------------------#
+    #---------------------    PURGING NON-ESSENTIALS    ---------------------#
+    #------------------------------------------------------------------------#
+    
+    #here we remove extraneous columns from the dataframe (i.e those that are
+    #    not used in Little_R format, or those that are simply duplicates in
+    #    non-SI units), and clip the dataset by the 'mintime' and 'maxtime'
+    #    set by the user, so that we are not performing calculations and other
+    #    computationally expensive tasks on more data than is necessary
+    
+    #remove columns that we do not use/need for Little_R
+        
+    
     #truncate/clip the dataset by the 'mintime' and 'maxtime' set by the user
     
     ''' Because not all sensors have the same amount of data, and the
