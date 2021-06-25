@@ -74,15 +74,21 @@ import reader
 ##############################   CONVERT DATA   ##############################
 ##############################################################################
 
-#here is the equivalent of '3D_main.py' for the quality assurance procedures
-def convert(directory, df):
+#here is the equivalent of '3D_main.py' for the data reformatting procedures
+def convert(directory, df, mintime, maxtime):
     
-    
+    #consider not reading in the SI1145 at all. It's not needed
     
     #if QA is performed then we need not read all that data in again; simply
     #    read in the QA-ed dataframe, remove the flagged data points, and
     #    continue straight to preparation for data format conversion
     
+    #saving a copies of the datetimeindex for mintime and maxtime (which 
+    #    reference indices of the dataframe associated with an actual
+    #    date/time now post-time_checker.py); this is so we can use them to
+    #    clip the data at the end per the user-defined time frame
+    start_time = df.time[mintime]
+    end_time = df.time[maxtime]
     
 
     #since performing the data conversion requires that all data be read in,
@@ -260,6 +266,8 @@ def convert(directory, df):
     #    computationally expensive tasks on more data than is necessary
     
     #remove columns that we do not use/need for Little_R
+    # #remove the, 'no_rain', all non-SI unit, altitude, and si1145
+    
         
     
     #truncate/clip the dataset by the 'mintime' and 'maxtime' set by the user
@@ -269,12 +277,24 @@ def convert(directory, df):
         record of the specific datetimeindex (not just the indices associated
         with those datetimeindices) in order to accurately clip the dataset
         where intended by the user-defined 'mintime' and 'maxtime' '''
+    #because the specific datetimeindices associated with mintime and maxtime
+    #    for the first sensor read in will be accurate, simply save copies of
+    #    the datetimeindices to new variable names using mintime and maxtime
+    #    immediately after the first dataframe gets read in
     
-    #check first whether there are ANY data within the timeframe specified
-    #if any df[mintime:maxtime]:
+    #truncate the dataframe based on the user-defined time frame; this
+    #    conversion procedure takes place after all other procedures, so it is
+    #    safe to redefine the dataframe ('df') with the clipped version of the
+    #    dataframe
+    df = df.set_index('time').loc[start_time:end_time].reset_index()
+    #df = df.truncate()
     
-    # #truncate the dataframe based on the user-defined time frame
-    # # df = df.iloc[mintime:maxtime]
+    #check whether there are ANY data within the timeframe specified
+    if df.notna().any().all() == True:
+        pass
+    else:
+        raise ValueError("No data in the chosen time frame.")
+        
     
     # #duration of time to truncate by as set by 'mintime' and 'maxtime'
     # time_full = pd.date_range(start=df.time[mintime], end=df.time[maxtime],freq='min')
@@ -284,6 +304,7 @@ def convert(directory, df):
     # #    within the 'mintime' and 'maxtime'
     # df = df.set_index('time').reindex(pd.Index(time_full, name='time')).reset_index()
 
+    
 
 
     return df

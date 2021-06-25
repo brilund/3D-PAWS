@@ -363,7 +363,7 @@ if mintime != 0 or maxtime != df.index[-1]:
 
 #placeholder for information on analytic metrics to be put into an output file
 if reformat == True:
-    df = convert(directory, df)
+    df = convert(directory, df, mintime, maxtime)
 else:
     pass
 
