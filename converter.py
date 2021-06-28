@@ -147,9 +147,14 @@ def convert(directory, df, mintime, maxtime):
     #REPLY: don't need to check this with the current method I have because
     #    the sensor list is generated from the folder_list so by default, they
     #    they will be in the same
-        
+    
     #within the parent station folder, loop through each sensor's data folder
     for folder,sensor in tuple_lst:
+        #quickly check whether or not the SI1145 sensor is the one set in
+        #    3D_main.py; if it is, we remove those columns because we do not
+        #    need them for Little_R
+        if "vis" in df.columns:
+            df = df.drop(columns=['vis', 'ir', 'uv', 'uvi'])
         
         #add a forward slash and wildcard character to the directory path
         full_path = folder + "/*"
@@ -180,7 +185,9 @@ def convert(directory, df, mintime, maxtime):
             sensor = "mcp9808"
             call_reader = reader.mcp9808(full_path, wildcard)
         elif "1145"  in sensor.lower() or "radiation" in sensor.lower():
-            call_reader = reader.si1145(full_path, wildcard)
+            print("Little_R does not require radiation data. Skipping SI1145 read...")
+            pass #we don't use any SI1145 data for Little_R so just move along here
+            #call_reader = reader.si1145(full_path, wildcard)
         elif "rain" in sensor.lower() or "tip" in sensor.lower() or "bucket" in sensor.lower() or "gauge" in sensor.lower():
             call_reader = reader.rain_gauge(full_path, wildcard)
         elif "vane" in sensor.lower() or "dir" in sensor.lower() or "direction" in sensor.lower():
@@ -265,18 +272,31 @@ def convert(directory, df, mintime, maxtime):
     #    set by the user, so that we are not performing calculations and other
     #    computationally expensive tasks on more data than is necessary
     
-    #remove columns that we do not use/need for Little_R
-    # #remove the, 'no_rain', all non-SI unit, altitude, and si1145
+    #might want to check whether there are even any data in the parent folder
+    #    otherwise, if there is no BMP data folder PERIOD, for example, then
+    #    the 'drop' line will break the code
     
+    #remove columns that we do not use/need for Little_R
+    #remove the, 'no_rain', all non-SI unit, altitude, and si1145
+    df = df.drop(columns=['SLP_hPa', 'SLP_inHg', 'alt', 'htu21d_tempF',
+                          'mcp9808_tempF', 'no_rain'])
+    #do something a little different here to account for possible BMP/BME
+    #    naming differences
+    for col in df.columns: #for each column name in the dataframe...
+        if 'tempF' in col: #...if refers to temperature in Fahrenheit...
+            df = df.drop(columns=col) #...discard that entire column from dataframe
+        else: #...otherwise...
+            pass #...keep it
         
     
     #truncate/clip the dataset by the 'mintime' and 'maxtime' set by the user
     
-    ''' Because not all sensors have the same amount of data, and the
-        dataframe gets re-indexed to accommodate this fact, we must keep a
-        record of the specific datetimeindex (not just the indices associated
-        with those datetimeindices) in order to accurately clip the dataset
-        where intended by the user-defined 'mintime' and 'maxtime' '''
+    #Because not all sensors have the same amount of data, and the
+    #    dataframe gets re-indexed to accommodate this fact, we must keep a
+    #    record of the specific datetimeindices (not just the indices associated
+    #    with those datetimeindices) associated with 'mintime' and 'maxtime'
+    #    in order to accurately clip the dataset where intended by the
+    #    user-defined 'mintime' and 'maxtime'
     #because the specific datetimeindices associated with mintime and maxtime
     #    for the first sensor read in will be accurate, simply save copies of
     #    the datetimeindices to new variable names using mintime and maxtime
@@ -287,24 +307,15 @@ def convert(directory, df, mintime, maxtime):
     #    safe to redefine the dataframe ('df') with the clipped version of the
     #    dataframe
     df = df.set_index('time').loc[start_time:end_time].reset_index()
-    #df = df.truncate()
+    #df = df.set_index('time').truncate(start_time:end_time)
     
     #check whether there are ANY data within the timeframe specified
     if df.notna().any().all() == True:
         pass
     else:
         raise ValueError("No data in the chosen time frame.")
-        
-    
-    # #duration of time to truncate by as set by 'mintime' and 'maxtime'
-    # time_full = pd.date_range(start=df.time[mintime], end=df.time[maxtime],freq='min')
-    
-    # #truncate the dataset by the specified time frame; note that this will
-    # #    return a dataframe full of NaNs if the data read in does not fall
-    # #    within the 'mintime' and 'maxtime'
-    # df = df.set_index('time').reindex(pd.Index(time_full, name='time')).reset_index()
 
-    
+    #
 
 
     return df
