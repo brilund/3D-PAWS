@@ -67,6 +67,7 @@ import sys
 import os
 import glob
 import reader
+from scipy import stats
 
 
 
@@ -75,9 +76,17 @@ import reader
 ##############################################################################
 
 #here is the equivalent of '3D_main.py' for the data reformatting procedures
-def convert(directory, df, mintime, maxtime):
+def convert(sensor, directory, df, mintime, maxtime):
     
-    #consider not reading in the SI1145 at all. It's not needed
+    #if the sensor specified in 3D_main.py is any of the temperature or
+    #    humidity sensors (i.e. the first sensor data read in) we must
+    #    rename the necessary columns accordingly so they are properly dealt
+    #    with below in the merge and purge sections
+    if "bmp" in sensor.lower() or "bme" in sensor.lower() or "mcp" in sensor.lower() or "htu" in sensor.lower():
+        df = df.rename(columns={'temp_C':'%s_tempC' % sensor,
+                                'temp_F':'%s_tempF' % sensor})
+        if "htu" in sensor.lower() or "bme" in sensor.lower():
+            df = df.rename(columns={'rel_hum':'%s_relhum' % sensor})
     
     #if QA is performed then we need not read all that data in again; simply
     #    read in the QA-ed dataframe, remove the flagged data points, and
@@ -88,7 +97,7 @@ def convert(directory, df, mintime, maxtime):
     #    date/time now post-time_checker.py); this is so we can use them to
     #    clip the data at the end per the user-defined time frame
     start_time = df.time[mintime]
-    end_time = df.time[maxtime]
+    end_time = df.time[maxtime-1]
     
 
     #since performing the data conversion requires that all data be read in,
@@ -138,6 +147,7 @@ def convert(directory, df, mintime, maxtime):
     #    name given by the 'sensor' variable is matched with its corresponding
     #    folder containing the data for said sensor (set by 'folder_list')
     tuple_lst = list(zip(folder_list,sensor_list))
+    print(tuple_lst)
     
     #need this because it is an input for the 'reader.py'
     wildcard = "*"
@@ -222,25 +232,13 @@ def convert(directory, df, mintime, maxtime):
         
         #change the column names to include the sensor name for the HTU, BMP,
         #    and MCP so that we can distinguish between the 3 temperatures
+        #    and 2 humidities
         
-        if sensor.lower() == "bmp180" or sensor.lower() == "bmp280" or sensor.lower() == "bmp" or sensor.lower() == "bme":
-            #add sensor name to the all column names except for the 'time'
-            #    column
+        if "bmp" in sensor.lower() or "bme" in sensor.lower() or "mcp" in sensor.lower() or "htu" in sensor.lower():
             df_temp = df_temp.rename(columns={'temp_C':'%s_tempC' % sensor,
                                               'temp_F':'%s_tempF' % sensor})
-            
-        elif sensor.lower() == "htu21d":
-            #add sensor name to the all column names except for the 'time'
-            #    column
-            df_temp = df_temp.rename(columns={'temp_C':'%s_tempC' % sensor,
-                                              'rel_hum':'%s_relhum' % sensor,
-                                              'temp_F':'%s_tempF' % sensor})
-        
-        elif sensor.lower() == "mcp9808":
-            #add sensor name to the all column names except for the 'time'
-            #    column
-            df_temp = df_temp.rename(columns={'temp_C':'%s_tempC' % sensor,
-                                              'temp_F':'%s_tempF' % sensor})
+            if "htu" in sensor.lower() or "bme" in sensor.lower():
+                df_temp = df_temp.rename(columns={'rel_hum':'%s_relhum' % sensor})
             
         else:
             #no other sensors share variable names so we don't need to add the
@@ -252,7 +250,10 @@ def convert(directory, df, mintime, maxtime):
         #    parameters set here create the UNION of the merged datasets, so
         #    that no data is lost from either dataframe; this means that where
         #    there is no overlap, the values are simply NaNs
-        df = df.join(df_temp.set_index('time'), on='time', how='outer', sort=True)
+        if "1145"  in sensor.lower() or "radiation" in sensor.lower():
+            pass
+        else:
+            df = df.join(df_temp.set_index('time'), on='time', how='outer', sort=True)
         
         #reset the indices so that they are in monotonically increasing order,
         #    beginning with zero
@@ -260,7 +261,8 @@ def convert(directory, df, mintime, maxtime):
         
     ### END OF 'subfolder'/'sensor' LOOP ###
     
-    
+    ''' Consider turning everything above this line into a function because
+        the quality assurance procedure will also need this'''
     
     #------------------------------------------------------------------------#
     #---------------------    PURGING NON-ESSENTIALS    ---------------------#
@@ -277,9 +279,10 @@ def convert(directory, df, mintime, maxtime):
     #    the 'drop' line will break the code
     
     #remove columns that we do not use/need for Little_R
+    #NOTE: will need to have an exception for QA-ed data which will contain
+    #      the SI1145 data
     #remove the, 'no_rain', all non-SI unit, altitude, and si1145
-    df = df.drop(columns=['SLP_hPa', 'SLP_inHg', 'alt', 'htu21d_tempF',
-                          'mcp9808_tempF', 'no_rain'])
+    df = df.drop(columns=['SLP_hPa', 'SLP_inHg', 'alt', 'no_rain'])
     #do something a little different here to account for possible BMP/BME
     #    naming differences
     for col in df.columns: #for each column name in the dataframe...
@@ -315,11 +318,96 @@ def convert(directory, df, mintime, maxtime):
     else:
         raise ValueError("No data in the chosen time frame.")
 
-    #
+    ''' WILL NEED TO ACCOUNT FOR LACK OF HTU AND INCLUSION OF BME IN THE FUTURE
+        WHEN THERE ARE TWO STANDARD CONFIGURATIONS OF 3D-PAWS '''
+        
+    
+    
+    #------------------------------------------------------------------------#
+    #-----------------    NEED ANY QUALITY ASSURANCE???    ------------------#
+    #------------------------------------------------------------------------#
+    
+    ''' Need some QA in here if none is performed prior to this point '''
+    
+    #find the number of temperature columns in the dataframe (this could vary
+    #    if, for example, there was no "bmp280" folder and subsequently, no
+    #    bmp column for temperature)
+    T_count = 0
+    for col in df.columns:
+        T_count += col.count('temp')
+    
+    #might need to account for whether QA was performed or not
+    
+    
+    
+    #first check if a value is within the z-score threshold, if yes, then
+    #    check if it falls within an acceptable climatological range, if yes,
+    #    then this value may be used for computing a mean temperature; if one
+    #    or both conditions is not met, then the value is set to a NaN so that
+    #    it does not get used for computing the mean temperature
+    
+    #compute the z-score
+    z = np.abs(stats.zscore(df[[x for x in df.columns if 'tempC' in x]],axis=1, nan_policy='omit'))
+    
+    #these are the locations of values that exceed that maximum acceptable
+    #    z-score value (i.e. outliers)
+    locs = np.where(z > 1.)
+    
+    #reassign the outliers as NaNs so they aren't used in computations
+    df.iloc[locs] = np.nan
+    
+    #reassign values that are outside the sensor specifications /
+    #    climatological limits as NaNs
+    bmp_t_min = -40.
+    bmp_t_max = 85.
+    
+    
+    # #if even one temperature value exists (assuming it is a viable one...)...
+    # if T_count > 0:
+    #     #...take the mean of any and all temperatures available for each
+    #     #    timestamp and store them in a new 'tempC' column
+    #     df['temp_C'] = df[[x for x in df.columns if 'tempC' in x]].mean(skipna=True, axis=1)
+        
+    #     #...then drop the original temperature columns
+    #     df = df.drop(columns=[x for x in df.columns if 'tempC' in x])
+    
+    #check that pressure is within climatological limits
+    
+    #check that RH is withing climatological limits
+    
+    #check that wind speed and direction are within logical limits
+    
+        
+    
+    
+    #------------------------------------------------------------------------#
+    #-----------------    INTEGRATING OVER PRECIPITATION    -----------------#
+    #------------------------------------------------------------------------#
+    
+    #integrate over a 1-hour period to get a cumulative sum of precipitation
+    #    valid at the top of the hour, calculated from the previous 60 minutes
+    #NOTE: the line below is a rolling sum so for each row/timestamp, there is
+    #    a value calculated from the previous 60 minutes, but when ready, we
+    #    will simply pluck the timestamps we need for the data conversion
+    #    process from the dataframe, just like for all other variables.
+    df['rain'] = pd.DataFrame(df.set_index('time').rain.rolling('60T').sum()).reset_index()['rain']
+    
+    
+    
+    #------------------------------------------------------------------------#
+    #-----------------    COLLECTING HOURLY OBSERVATIONS    -----------------#
+    #------------------------------------------------------------------------#
+    ''' What to do in the event of not a full 24-hour period '''
+    
+    #we only need 1-hour observations, so remove all others from the dataset
+    df = df[::60]
+
 
 
     return df
     
+
+
 
 
    

@@ -290,6 +290,16 @@ def input_checker(sensor, var_name, units, averaged, avg_window, reformat):
         sys.exit()
     
     
+    #------------------------------------------------------------------------#
+    #-----------------    VERIFYING CONVERTER / QA INPUT    -----------------#
+    #------------------------------------------------------------------------#
+    
+    #write this section to check the the input parameters satisfy the
+    #    requirements of the converter.py and quality_assurance.py, such as
+    #    'mintime' and 'maxtime' should be 00Z; this will simplify a lot of 
+    #    things for the converter, at the very least
+    
+    
     ##########################################################################
     
     print("------------------------------------------------------------------")

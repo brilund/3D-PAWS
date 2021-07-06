@@ -164,11 +164,11 @@ import plotter as pltr
 
 #set this to the name of the sensor from which you want to plot (NOT case
 #    sensitive)
-sensor = "anemometer"
+sensor = "bmp280"
 
 #set the 'directory' variable to the absolute path where your data are stored;
 #    don't forget the trailing forward slash!
-directory = "/Users/blund/Documents/3D-PAWS/Data/CSA_3DPAWS01/wx_stn/windspd/"
+directory = "/Users/blund/Documents/3D-PAWS/Data/CSA_3DPAWS01/wx_stn/BMP280/"
 
 #specify the FULL file path to the directory in which to save your figures;
 #    don't forget to include the trailing forward slash!
@@ -188,7 +188,7 @@ site_ID = "CSA"
 
 #change this to the name of the variable you want to plot; a list of
 #    acceptable options can be found in the "How to Use:" section above
-var_name = "uv"
+var_name = "temp_C"
 
 #change this to the units you want to plot; a list of acceptable options can
 #    be found in the "How to Use:" section above*
@@ -363,7 +363,7 @@ if mintime != 0 or maxtime != df.index[-1]:
 
 #placeholder for information on analytic metrics to be put into an output file
 if reformat == True:
-    df = convert(directory, df, mintime, maxtime)
+    df = convert(sensor, directory, df, mintime, maxtime)
 else:
     pass
 
