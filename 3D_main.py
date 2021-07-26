@@ -168,11 +168,11 @@ sensor = "bmp280"
 
 #set the 'directory' variable to the absolute path where your data are stored;
 #    don't forget the trailing forward slash!
-directory = "/Users/blund/Documents/3D-PAWS/Data/CSA_3DPAWS01/wx_stn/BMP280/"
+directory = "/Users/blund/Documents/3D-PAWS/lake_victoria/data/WMO_HIGHWAY_14/bmp/"
 
 #specify the FULL file path to the directory in which to save your figures;
 #    don't forget to include the trailing forward slash!
-save_dir = "/Users/blund/Documents/3D-PAWS/_my_code/figures/si1145_testing/_monthly_ALL/ultraviolet/"
+save_dir = "/Users/blund/Documents/3D-PAWS/lake_victoria/data/little_R_files/"
 
 #set the wildcard option; to read in EVERY file within the directory you
 #    specified above in 'directory', set 'wildcard' to "*"; you may specify
@@ -184,7 +184,7 @@ wildcard = "*"
 #    will be used in the plot title as well as the name of the figure; if 
 #    reading in data from multiple datasets, 'site_ID' is automatically chosen
 #    from the station's folder name
-site_ID = "CSA"
+site_ID = "WMO_HIGHWAY_14"
 
 #change this to the name of the variable you want to plot; a list of
 #    acceptable options can be found in the "How to Use:" section above
@@ -222,6 +222,10 @@ qa = False
 #    number of other input options will be ignored and the data read in will
 #    be converted to Little_R format
 reformat = True
+#the following variables are only needed if 'reformat' is set to True
+elevation = 1175.0 #elevation (m) of the station being read in
+latitude = 0.038552 #latitude in decimal degress of the station being read in
+longitude = 34.222893 #longitude in decimal degress of the station being read in
 
 #set the time frame over which to plot (UTC); you must use the following
 #    format: "YYYY-MM-DD HH:mm"; to plot the whole dataset, set 'mintime'
@@ -229,8 +233,8 @@ reformat = True
 #    from the beginning of the time period, set mintime = "" and set 'maxtime'
 #    to your end date/time. Vice versa for plotting to the end of the whole
 #    time period
-mintime = "2019-03-06 00:00"
-maxtime = "2019-03-07 00:00"
+mintime = "2019-03-04 10:00"
+maxtime = "2019-03-07 19:00"
 
 #set this to reflect the type of plots you want (i.e. daily, weekly, monthly,
 #    specified time frame); see the How To Use section for a list of accepted
@@ -363,7 +367,7 @@ if mintime != 0 or maxtime != df.index[-1]:
 
 #placeholder for information on analytic metrics to be put into an output file
 if reformat == True:
-    df = convert(sensor, directory, df, mintime, maxtime)
+    df = convert(sensor, directory, site_ID, elevation, latitude, longitude, df, mintime, maxtime, save_dir)
 else:
     pass
 

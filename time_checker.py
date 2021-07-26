@@ -91,7 +91,7 @@ import sys
 #'mintime', 'maxtime', and 'df' (dataframe) are called from the main function;
 #    'df' is needed because we use the dataframe and some dataframe methods to
 #    check timestamps
-def time_checker(mintime, maxtime, plot_opt, df):
+def time_checker(mintime, maxtime, plot_opt, df, reformat):
     
     #tell the user that the function was called
     print("------------------------------------------------------------------\n")
@@ -116,23 +116,23 @@ def time_checker(mintime, maxtime, plot_opt, df):
     #    requirement helps weed out a number of potentially incompatible formats,
     #    making the creation of the following error checkers more manageable!
     if mintime == "" and len(maxtime) == 16:
-            try:
-                pd.to_datetime(maxtime, format='%Y-%m-%d %H:%M')
-            except ValueError:
-                raise ValueError("Incorrect format for 'maxtime'; should be YYYY-MM-DD HH:mm")
+        try:
+            pd.to_datetime(maxtime, format='%Y-%m-%d %H:%M')
+        except ValueError:
+            raise ValueError("Incorrect format for 'maxtime'; should be YYYY-MM-DD HH:mm")
             
     elif maxtime == "" and len(mintime) == 16:
-            try:
-                pd.to_datetime(mintime, format='%Y-%m-%d %H:%M')
-            except ValueError:
-                raise ValueError("Incorrect format for 'mintime'; should be YYYY-MM-DD HH:mm")
+        try:
+            pd.to_datetime(mintime, format='%Y-%m-%d %H:%M')
+        except ValueError:
+            raise ValueError("Incorrect format for 'mintime'; should be YYYY-MM-DD HH:mm")
         
     elif len(mintime) == 16 and len(maxtime) == 16: #they should include 16 characters
-            try:
-                pd.to_datetime(mintime, format='%Y-%m-%d %H:%M')
-                pd.to_datetime(maxtime, format='%Y-%m-%d %H:%M')
-            except ValueError:
-                raise ValueError("Incorrect format for 'mintime'/'maxtime'; should be YYYY-MM-DD HH:mm")  
+        try:
+            pd.to_datetime(mintime, format='%Y-%m-%d %H:%M')
+            pd.to_datetime(maxtime, format='%Y-%m-%d %H:%M')
+        except ValueError:
+            raise ValueError("Incorrect format for 'mintime'/'maxtime'; should be YYYY-MM-DD HH:mm")  
                 
     elif mintime == "" and maxtime == "":
         pass
@@ -141,7 +141,13 @@ def time_checker(mintime, maxtime, plot_opt, df):
         #anything that is not an empty string or 16 characters in length
         #    automatically fails the checks
         raise ValueError("Incorrect format for 'mintime'; should be YYYY-MM-DD HH:mm")
-        
+    
+    #when reformatting is to be performed, 'mintime' must be set to the
+    #    nearest whole hour (i.e. minutes must be "00")
+    if reformat == True:
+        if mintime[-2:] != "00":
+            raise ValueError("'mintime' must be set to a whole hour (e.g. 01:00, 12:00, etc.)")
+    
     #then check to see if 'mintime' and 'maxtime' are within the dataset that was
     #    read in
     if pd.to_datetime(mintime) < df.time.min() or \
