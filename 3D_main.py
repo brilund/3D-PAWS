@@ -255,19 +255,14 @@ tag = ""
 #----------------------------------------------------------------------------#
 ##############################################################################
 
-#collect all the folders within the parent 'directory'
-folder_list = glob.glob(directory + "*")
-#sort the folder list
-folder_list = sorted(folder_list)
-            
-
+'''''''''          Nothing below here should need user-input          '''''''''
 
 ##############################################################################
 ############################    VERIFY INPUT    ##############################
 ##############################################################################
 
 #call the input checker function to verify a number of user inputs, namely,
-check_inputs = input_checker(sensor, var_name, units, averaged, avg_window, reformat)
+check_inputs = input_checker(sensor, var_name, units, averaged, avg_window, reformat, elevation, latitude, longitude)
 
 #'averaged' is the only variable that has the potential to change when sent to
 #    the input checker so it gets redefined here, even if is does not change
@@ -319,7 +314,7 @@ missing_reports_times = call_reader[1]
 
 #this must be done AFTER the data is read in and cleansed since the dataset is
 #    used to determine the validity of the user-input 'mintime' and 'maxtime'
-check_time = time_checker(mintime, maxtime, plot_opt, df)
+check_time = time_checker(mintime, maxtime, plot_opt, df, reformat)
 
 #the following variables are output from the time_checker function called above;
 #    separate them by their respective, appropriate variable names since they
@@ -367,9 +362,17 @@ if mintime != 0 or maxtime != df.index[-1]:
 
 #placeholder for information on analytic metrics to be put into an output file
 if reformat == True:
-    df = convert(sensor, directory, site_ID, elevation, latitude, longitude, df, mintime, maxtime, save_dir)
+    convert(sensor, directory, site_ID, elevation, latitude, longitude, df, mintime, maxtime, save_dir)
 else:
     pass
+
+
+
+##############################################################################
+#################################   OUTPUT   #################################
+##############################################################################
+
+#placeholder for information on analytic metrics to be put into an output file
 
 
 
@@ -395,14 +398,6 @@ if sensor == "anemometer":
 #compute any statistical analytics here; this is a place holder and will call
 #    a function that does all the work for us; some, if not all, this
 #    information will get plugged into the creation of the output file
-
-
-
-##############################################################################
-#################################   OUTPUT   #################################
-##############################################################################
-
-#placeholder for information on analytic metrics to be put into an output file
 
 
 

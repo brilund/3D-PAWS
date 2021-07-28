@@ -132,7 +132,7 @@ def _smooth_params(averaged, avg_window):
 ############################### Input Checker ################################
 
 #call this function to check the more critical user inputs
-def input_checker(sensor, var_name, units, averaged, avg_window, reformat):
+def input_checker(sensor, var_name, units, averaged, avg_window, reformat, elevation, latitude, longitude):
     
     #tell the user that the function was called
     print("------------------------------------------------------------------\n")
@@ -142,152 +142,130 @@ def input_checker(sensor, var_name, units, averaged, avg_window, reformat):
     #    choose from
     sensor_list = ["bmp180", "bmp280", "htu21d", "mcp9808", "si1145", "rain",
                    "anemometer", "wind_vane"]
+        
+        
+    ##################### Check Sensor & Variable/Units ######################
     
-    #if converting data, we don't care about units, variable names, or the
-    #    averaging parameters ('averaged' and 'avg_window') so we can ignore
-    #    those variables no matter what they are, and jump right to the
-    #    reader function
-    if reformat == True:
-        #need only check that the sensor name is correct for the reader
-        #    function later on
-        if sensor.lower() in sensor_list:
-            pass
-        else:
-            #print an error message, tell the user what options ARE accepted, then
-            #    exit the program
-            print("'%s' is not an accepted sensor name\n" % sensor)
-            print("Accepted sensor names are...\n")
-            for sensor in sensor_list:
-                print(sensor)
-            sys.exit()
+    #create a list containing the variable names that the user is allowed to
+    #    choose from
+    varname_list = ["SLP_hPa", "SLP_inHg", "station_P", "alt", "temp_C",
+                    "temp_F", "rel_hum", "vis", "ir", "uv", "uvi"]
+    
+    #create a list containing the unit identifiers that the user is allowed to
+    #    choose from; remember that 'units' are only required for wind speed
+    #    measurements and precipitation measurements
+    units_list = ["mm","inches","mps","kmph","mph","kts"]
+    
+    #create a dictionary with the sensor names as keys and variable names / 
+    #    units as elements associated with those keys
+    dictionary = {sensor_list[0]:varname_list[:6], sensor_list[1]:varname_list[:6],
+                  sensor_list[2]:varname_list[4:7], sensor_list[3]:varname_list[4:6],
+                  sensor_list[4]:varname_list[7:], sensor_list[5]:units_list[:2],
+                  sensor_list[6]:units_list[2:], sensor_list[7]:[]}
+    
+    #check whether 'sensor' (case insensitive) equals any of the accepted
+    #    options in 'sensor_list'...
+    if sensor.lower() == sensor_list[0] or sensor.lower() == sensor_list[1]: #BMP180/280
         
-    elif reformat == False:
-        
-        ##################### Check Sensor & Variable/Units ######################
-        
-        #create a list containing the variable names that the user is allowed to
-        #    choose from
-        varname_list = ["SLP_hPa", "SLP_inHg", "station_P", "alt", "temp_C",
-                        "temp_F", "rel_hum", "vis", "ir", "uv", "uvi"]
-        
-        #create a list containing the unit identifiers that the user is allowed to
-        #    choose from; remember that 'units' are only required for wind speed
-        #    measurements and precipitation measurements
-        units_list = ["mm","inches","mps","kmph","mph","kts"]
-        
-        #create a dictionary with the sensor names as keys and variable names / 
-        #    units as elements associated with those keys
-        dictionary = {sensor_list[0]:varname_list[:6], sensor_list[1]:varname_list[:6],
-                      sensor_list[2]:varname_list[4:7], sensor_list[3]:varname_list[4:6],
-                      sensor_list[4]:varname_list[7:], sensor_list[5]:units_list[:2],
-                      sensor_list[6]:units_list[2:], sensor_list[7]:[]}
-        
-        #check whether 'sensor' (case insensitive) equals any of the accepted
-        #    options in 'sensor_list'...
-        if sensor.lower() == sensor_list[0] or sensor.lower() == sensor_list[1]: #BMP180/280
-            
-            #...if yes, check that 'var_name' was specificed appropriately and is
-            #    associated with 'sensor'...
-            if var_name in dictionary[sensor_list[0]]:
-                pass
-            
-            #if not associated with the BMP180/280 sensor (or misspelled), print
-            #    a message to the user
-            else:
-                print("'%s' is not an accepted variable name for %s\n" % (var_name,sensor))
-                print("Accepted variable names are...")
-                print("'%s' for sea-level pressure (hPa)" % varname_list[0])
-                print("'%s' for sea-level pressure (inches of Hg)" % varname_list[1])
-                print("'%s' for station pressure (hPa)" % varname_list[2])
-                print("'%s' for altitude (m)" % varname_list[3])
-                print("'%s' for temperature (deg C)" % varname_list[4])
-                print("'%s' for temperature (deg F)" % varname_list[5])
-                sys.exit()
-        
-        elif sensor.lower() == sensor_list[2]: #HTU21D
-        
-            if var_name in dictionary[sensor_list[2]]:
-                pass
-            
-            else:
-                print("'%s' is not an accepted variable name for %s\n" % (var_name,sensor))
-                print("Accepted variable names are...")
-                print("'%s' for temperature (deg C)" % varname_list[4])
-                print("'%s' for temperature (deg F)" % varname_list[5])
-                print("'%s' for relative humidity (%%)" % varname_list[6])
-                sys.exit()
-            
-        elif sensor.lower() == sensor_list[3]: #MCP9808
-        
-            if var_name in dictionary[sensor_list[3]]:
-                pass
-            
-            else:
-                print("'%s' is not an accepted variable name for %s\n" % (var_name,sensor))
-                print("Accepted variable names are...")
-                print("'%s' for temperature (deg C)" % varname_list[4])
-                print("'%s' for temperature (deg F)" % varname_list[5])
-                sys.exit()
-            
-        elif sensor.lower() == sensor_list[4]: #SI1145
-            
-            if var_name in dictionary[sensor_list[4]]:
-                pass
-            
-            else:
-                print("'%s' is not an accepted variable name for %s\n" % (var_name,sensor))
-                print("Accepted variable names are...")
-                print("'%s' for visible light (W/m^2)" % varname_list[7])
-                print("'%s' for infrared radiation (W/m^2)" % varname_list[8])
-                print("'%s' for ultraviolet radiation (W/m^2)" % varname_list[9])
-                print("'%s' for ultraviolet index (unitless)" % varname_list[10])
-                sys.exit()
-            
-        elif sensor.lower() == sensor_list[5]: #RAIN
-        
-            if units in dictionary[sensor_list[5]]:
-                pass
-            
-            else:
-                print("'%s' is not an accepted unit identifier for %s\n" % (units,sensor))
-                print("Accepted unit identifiers are...")
-                print("'%s' for millimeters" % units_list[0])
-                print("'%s' for inches" % units_list[1])
-                sys.exit()
-            
-        elif sensor.lower() == sensor_list[6]: #ANEMOMETER
-        
-            if units in dictionary[sensor_list[6]]:
-                #check the averaging options
-                averaged = _smooth_params(averaged, avg_window)
-                
-            else:
-                print("'%s' is not an accepted unit identifier for %s\n" % (units,sensor))
-                print("Accepted unit identifiers are...")
-                print("'%s' for meters per second (m/s)" % units_list[2])
-                print("'%s' for kilometers per hour (km/h)" % units_list[3])
-                print("'%s' for miles per hour (mi/h)" % units_list[4])
-                print("'%s' for knots" % units_list[5])
-                sys.exit()
-            #will need to collect the "Converting the Data" section in this sensor's function
-            
-        elif sensor.lower() == sensor_list[7]: #WIND VANE
-            #wind direction has no other inputs
+        #...if yes, check that 'var_name' was specificed appropriately and is
+        #    associated with 'sensor'...
+        if var_name in dictionary[sensor_list[0]]:
             pass
         
-        #if 'sensor' does not equal any of the accepts options...
+        #if not associated with the BMP180/280 sensor (or misspelled), print
+        #    a message to the user
         else:
-            #print an error message, tell the user what options ARE accepted, then
-            #    exit the program
-            print("'%s' is not an accepted sensor name\n" % sensor)
-            print("Accepted sensor names are...\n")
-            for sensor in sensor_list:
-                print(sensor)
+            print("'%s' is not an accepted variable name for %s\n" % (var_name,sensor))
+            print("Accepted variable names are...")
+            print("'%s' for sea-level pressure (hPa)" % varname_list[0])
+            print("'%s' for sea-level pressure (inches of Hg)" % varname_list[1])
+            print("'%s' for station pressure (hPa)" % varname_list[2])
+            print("'%s' for altitude (m)" % varname_list[3])
+            print("'%s' for temperature (deg C)" % varname_list[4])
+            print("'%s' for temperature (deg F)" % varname_list[5])
             sys.exit()
     
+    elif sensor.lower() == sensor_list[2]: #HTU21D
+    
+        if var_name in dictionary[sensor_list[2]]:
+            pass
+        
+        else:
+            print("'%s' is not an accepted variable name for %s\n" % (var_name,sensor))
+            print("Accepted variable names are...")
+            print("'%s' for temperature (deg C)" % varname_list[4])
+            print("'%s' for temperature (deg F)" % varname_list[5])
+            print("'%s' for relative humidity (%%)" % varname_list[6])
+            sys.exit()
+        
+    elif sensor.lower() == sensor_list[3]: #MCP9808
+    
+        if var_name in dictionary[sensor_list[3]]:
+            pass
+        
+        else:
+            print("'%s' is not an accepted variable name for %s\n" % (var_name,sensor))
+            print("Accepted variable names are...")
+            print("'%s' for temperature (deg C)" % varname_list[4])
+            print("'%s' for temperature (deg F)" % varname_list[5])
+            sys.exit()
+        
+    elif sensor.lower() == sensor_list[4]: #SI1145
+        
+        if var_name in dictionary[sensor_list[4]]:
+            pass
+        
+        else:
+            print("'%s' is not an accepted variable name for %s\n" % (var_name,sensor))
+            print("Accepted variable names are...")
+            print("'%s' for visible light (W/m^2)" % varname_list[7])
+            print("'%s' for infrared radiation (W/m^2)" % varname_list[8])
+            print("'%s' for ultraviolet radiation (W/m^2)" % varname_list[9])
+            print("'%s' for ultraviolet index (unitless)" % varname_list[10])
+            sys.exit()
+        
+    elif sensor.lower() == sensor_list[5]: #RAIN
+    
+        if units in dictionary[sensor_list[5]]:
+            pass
+        
+        else:
+            print("'%s' is not an accepted unit identifier for %s\n" % (units,sensor))
+            print("Accepted unit identifiers are...")
+            print("'%s' for millimeters" % units_list[0])
+            print("'%s' for inches" % units_list[1])
+            sys.exit()
+        
+    elif sensor.lower() == sensor_list[6]: #ANEMOMETER
+    
+        if units in dictionary[sensor_list[6]]:
+            #check the averaging options
+            averaged = _smooth_params(averaged, avg_window)
+            
+        else:
+            print("'%s' is not an accepted unit identifier for %s\n" % (units,sensor))
+            print("Accepted unit identifiers are...")
+            print("'%s' for meters per second (m/s)" % units_list[2])
+            print("'%s' for kilometers per hour (km/h)" % units_list[3])
+            print("'%s' for miles per hour (mi/h)" % units_list[4])
+            print("'%s' for knots" % units_list[5])
+            sys.exit()
+        #will need to collect the "Converting the Data" section in this sensor's function
+        
+    elif sensor.lower() == sensor_list[7]: #WIND VANE
+        #wind direction has no other inputs
+        pass
+    
+    #if 'sensor' does not equal any of the accepts options...
     else:
-        print("'reformat' option not recognized (must be either True or False)")
+        #print an error message, tell the user what options ARE accepted, then
+        #    exit the program
+        print("'%s' is not an accepted sensor name\n" % sensor)
+        print("Accepted sensor names are...\n")
+        for sensor in sensor_list:
+            print(sensor)
         sys.exit()
+    
     
     
     #------------------------------------------------------------------------#
@@ -298,6 +276,27 @@ def input_checker(sensor, var_name, units, averaged, avg_window, reformat):
     #    requirements of the converter.py and quality_assurance.py, such as
     #    'mintime' and 'maxtime' should be 00Z; this will simplify a lot of 
     #    things for the converter, at the very least
+    
+    #if converting data, check that the few parameters that are exclusive to
+    #    the converter.py are valid
+    if reformat == True:
+        
+        #check that latitude and longitude are within acceptable limits
+        if latitude < -90. or latitude >= 90.:
+            raise ValueError("Latitude out of range.")
+        
+        if longitude < -180. or longitude > 180.:
+            raise ValueError("Longitude out of range.")
+        
+        #check that elevation is within acceptable limits
+        if elevation < 0. or elevation > 8900.:
+            raise ValueError("Elevation out of range.")
+        
+    elif reformat == False:
+        pass
+    else:
+        print("'reformat' option not recognized (must be either True or False)")
+        sys.exit()
     
     
     ##########################################################################

@@ -142,11 +142,6 @@ def time_checker(mintime, maxtime, plot_opt, df, reformat):
         #    automatically fails the checks
         raise ValueError("Incorrect format for 'mintime'; should be YYYY-MM-DD HH:mm")
     
-    #when reformatting is to be performed, 'mintime' must be set to the
-    #    nearest whole hour (i.e. minutes must be "00")
-    if reformat == True:
-        if mintime[-2:] != "00":
-            raise ValueError("'mintime' must be set to a whole hour (e.g. 01:00, 12:00, etc.)")
     
     #then check to see if 'mintime' and 'maxtime' are within the dataset that was
     #    read in
@@ -154,21 +149,26 @@ def time_checker(mintime, maxtime, plot_opt, df, reformat):
         pd.to_datetime(mintime) > df.time.max() or \
             pd.to_datetime(maxtime) > df.time.max() or \
                 pd.to_datetime(maxtime) < df.time.min():
-        print("'mintime'/'maxtime' are outside the range of time.")
-        print("The minimum start time is %s." % str(df.time.min()))
-        print("The maximum end time is %s.\n" % str(df.time.max()))
+                    
+        raise ValueError("'mintime'/'maxtime' are outside the range of time.\nThe minimum start time is %s.\nThe maximum end time is %s.\n" % (str(df.time.min()),str(df.time.max())))
         #remind the user what their start/end time limits are^
-        #sys.exit()
-        #duration of time to truncate by as set by 'mintime' and 'maxtime'
-        time_full = pd.date_range(start=mintime, end=maxtime,freq='min')
+        # sys.exit()
         
-        #truncate the dataset by the specified time frame; note that this will
-        #    return a dataframe full of NaNs if the data read in does not fall
-        #    within the 'mintime' and 'maxtime'
-        df = df.set_index('time').reindex(pd.Index(time_full, name='time')).reset_index()
+        #the stuff commented out below within this 'if' condition was
+        #    designed to bypass the complete lack of data for the very first
+        #    sensor read in if the 'reformatter' is being utilized, but its
+        #    existence requires some more adjustments in the "Uptime within
+        #    time frame" section...
+        # #duration of time to truncate by as set by 'mintime' and 'maxtime'
+        # time_full = pd.date_range(start=mintime, end=maxtime,freq='min')
         
-        mintime = 0
-        maxtime = df.index[-1]
+        # #truncate the dataset by the specified time frame; note that this will
+        # #    return a dataframe full of NaNs if the data read in does not fall
+        # #    within the 'mintime' and 'maxtime'
+        # df = df.set_index('time').reindex(pd.Index(time_full, name='time')).reset_index()
+        
+        # mintime = 0
+        # maxtime = df.index[-1]
     
     #check that 'mintime' is explicitly less than 'maxtime'
     elif pd.to_datetime(mintime) >= pd.to_datetime(maxtime):
@@ -204,7 +204,14 @@ def time_checker(mintime, maxtime, plot_opt, df, reformat):
             mintime = time.get_loc(pd.to_datetime(mintime))
             maxtime = time.get_loc(pd.to_datetime(maxtime))
             
-        
+            
+        #when reformatting is to be performed, 'mintime' must be set to the
+        #    nearest whole hour (i.e. minutes must be "00")
+        if reformat == True:
+            if df.time[mintime].minute != 0:
+                raise ValueError("'mintime' must be set to a whole hour (e.g. 01:00, 12:00, etc.)")
+            
+            
         #if using the daily, weekly, or monthly plotter, check that the interval
         #    of time determined by the user-defined range limits is at least 1 day,
         #    7 days, or 28 days, respectively
@@ -252,7 +259,13 @@ def time_checker(mintime, maxtime, plot_opt, df, reformat):
             pass
     
     
-    ######################### Uptime within Time Frame ########################### 
+    ######################### Uptime within Time Frame ###########################
+    ''' Make this a function and then you can tuck it into each of the 'Time
+        Frame Setup' conditions for which it applies. Do this and you can
+        reinstate the little bypass condition above so that the sensor you
+        start with for converting does not need to have data within the
+        specified time frame. It will still stall when the plotting options
+        are checked, however'''
     
     #calculate the total uptime based on the number of missing reports,
     #    but within the time frame ('mintime' and 'maxtime') set by the user; must

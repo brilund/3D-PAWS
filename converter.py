@@ -363,359 +363,360 @@ def convert(sensor, directory, site_ID, elev, lat, lon, df, mintime, maxtime, sa
         
     
     
-    # #------------------------------------------------------------------------#
-    # #-----------------    NEED ANY QUALITY ASSURANCE???    ------------------#
-    # #------------------------------------------------------------------------#
+    #------------------------------------------------------------------------#
+    #-----------------    NEED ANY QUALITY ASSURANCE???    ------------------#
+    #------------------------------------------------------------------------#
     
-    # ''' Need some QA in here if none is performed prior to this point '''
+    ''' Need some QA in here if none is performed prior to this point '''
     
-    # #find the number of temperature columns in the dataframe (this could vary
-    # #    if, for example, there was no "bmp280" folder and subsequently, no
-    # #    bmp column for temperature)
-    # T_count = 0
-    # for col in df.columns:
-    #     T_count += col.count('temp')
+    #find the number of temperature columns in the dataframe (this could vary
+    #    if, for example, there was no "bmp280" folder and subsequently, no
+    #    bmp column for temperature)
+    T_count = 0
+    for col in df.columns:
+        T_count += col.count('temp')
         
-    # #if there are any temperature sensors at all, then proceed
+    #if there are any temperature sensors at all, then proceed
     
-    # #might need to account for whether QA was performed or not
+    #might need to account for whether QA was performed or not
     
-    # #will need to do some similar QA if an HTU and BME are present
+    #will need to do some similar QA if an HTU and BME are present
     
     
     
-    # #first check if a value falls within an acceptable climatological range,
-    # #    if yes, then check if it is within the z-score threshold, if yes,
-    # #    then this value may be used for computing a mean temperature; if one
-    # #    or both conditions is not met, then the value is set to a NaN so that
-    # #    it does not get used for computing the mean temperature
+    #first check if a value falls within an acceptable climatological range,
+    #    if yes, then check if it is within the z-score threshold, if yes,
+    #    then this value may be used for computing a mean temperature; if one
+    #    or both conditions is not met, then the value is set to a NaN so that
+    #    it does not get used for computing the mean temperature
     
-    # #how to account for missing bmp values that make the z-score for the two
-    # #    remaining temperatures equal to 1? Or the fact that the locations are
-    # #    based on a subset of the main dataframe, therefore, when applying to
-    # #    the whole dataframe, non-temp columns get affected?...
+    #how to account for missing bmp values that make the z-score for the two
+    #    remaining temperatures equal to 1? Or the fact that the locations are
+    #    based on a subset of the main dataframe, therefore, when applying to
+    #    the whole dataframe, non-temp columns get affected?...
     
-    # #reassign temperatures that are outside the sensor specifications /
-    # #    climatological limits as NaNs; we use the sensor limits of the BMP
-    # #    because it has the lowest maximum acceptable temperature
-    # bmp_t_min = -40.
-    # bmp_t_max = 85.
+    #reassign temperatures that are outside the sensor specifications /
+    #    climatological limits as NaNs; we use the sensor limits of the BMP
+    #    because it has the lowest maximum acceptable temperature
+    bmp_t_min = -40.
+    bmp_t_max = 85.
     
-    # for col in df.columns[[x for x in range(len(df.columns)) if 'tempC' in df.columns[x]]]:
-    #     df[col][df[col] < bmp_t_min] = np.nan
-    #     df[col][df[col] > bmp_t_max] = np.nan
+    for col in df.columns[[x for x in range(len(df.columns)) if 'tempC' in df.columns[x]]]:
+        df[col][df[col] < bmp_t_min] = np.nan
+        df[col][df[col] > bmp_t_max] = np.nan
         
         
-    # #if the value spread is too large, eliminate all temperatures for further
-    # #    use
-    # for col in df[[x for x in df.columns if 'tempC' in x]].columns:
-    #     for i in range(len(df[col])):
-    #         if df[[x for x in df.columns if 'tempC' in x]].std(axis=1)[i] > 1.:
-    #             df[col][i] = np.nan
+    #if the value spread is too large, eliminate all temperatures for further
+    #    use
+    for col in df[[x for x in df.columns if 'tempC' in x]].columns:
+        for i in range(len(df[col])):
+            if df[[x for x in df.columns if 'tempC' in x]].std(axis=1)[i] > 1.:
+                df[col][i] = np.nan
     
-    # #compute the z-score for the temperatures only, but don't include NaNs
-    # #NOTE: this may break in the event of only one valid (non-NaN) temperature
-    # #      available for a given timestamp --> it turns that last
-    # z = np.abs(stats.zscore(df[[x for x in df.columns if 'tempC' in x]],axis=1, ddof=1, nan_policy='omit'))
+    #compute the z-score for the temperatures only, but don't include NaNs
+    #NOTE: this may break in the event of only one valid (non-NaN) temperature
+    #      available for a given timestamp --> it turns that last
+    z = np.abs(stats.zscore(df[[x for x in df.columns if 'tempC' in x]],axis=1, ddof=1, nan_policy='omit'))
     
-    # #these are the locations of values that exceed that maximum acceptable
-    # #    z-score value (i.e. outliers)
-    # locs = np.where(z > 1.1)
+    #these are the locations of values that exceed that maximum acceptable
+    #    z-score value (i.e. outliers)
+    locs = np.where(z > 1.1)
     
-    # #reassign the outliers as NaNs so they aren't used in computations
-    # for col in df[[x for x in df.columns if 'tempC' in x]].columns:
-    #     for i in range(len(df[col])):
-    #         if z[col][i] > 1.1:
-    #             df[col][i] = np.nan
+    #reassign the outliers as NaNs so they aren't used in computations
+    for col in df[[x for x in df.columns if 'tempC' in x]].columns:
+        for i in range(len(df[col])):
+            if z[col][i] > 1.1:
+                df[col][i] = np.nan
                 
-    # ### This unfortunately does not work... ###
-    # # df = df.set_index('time')
-    # # df[z.columns].iloc[locs] = np.nan
-    # # df = df.reset_index()
-    # ###########################################
+    ### This unfortunately does not work... ###
+    # df = df.set_index('time')
+    # df[z.columns].iloc[locs] = np.nan
+    # df = df.reset_index()
+    ###########################################
     
-    # #if even one temperature value exists...
-    # if T_count > 0:
-    #     #...take the mean of any and all temperatures available for each
-    #     #    timestamp and store them in a new 'tempC' column
-    #     df['temp_C'] = df[[x for x in df.columns if 'tempC' in x]].mean(skipna=True, axis=1)
+    #if even one temperature value exists...
+    if T_count > 0:
+        #...take the mean of any and all temperatures available for each
+        #    timestamp and store them in a new 'tempC' column
+        df['temp_C'] = df[[x for x in df.columns if 'tempC' in x]].mean(skipna=True, axis=1)
         
-    #     #...then drop the original temperature columns
-    #     df = df.drop(columns=[x for x in df.columns if 'tempC' in x])
+        #...then drop the original temperature columns
+        df = df.drop(columns=[x for x in df.columns if 'tempC' in x])
     
-    # #check that pressure is within logical limits; may need to compare with
-    # #    MSLP, altitude (determined by GPS coordinates), and limits determined
-    # #    by 0 m AGL and 8900 m AGL (height of Mt. Everest)
+    #check that pressure is within logical limits; may need to compare with
+    #    MSLP, altitude (determined by GPS coordinates), and limits determined
+    #    by 0 m AGL and 8900 m AGL (height of Mt. Everest)
     
-    # #check that RH is withing climatological limits
-    # df.htu21d_relhum[df.htu21d_relhum < 0.] = np.nan
-    # df.htu21d_relhum[df.htu21d_relhum > 100.] = np.nan
+    #check that RH is withing climatological limits
+    df.htu21d_relhum[df.htu21d_relhum < 0.] = np.nan
+    df.htu21d_relhum[df.htu21d_relhum > 100.] = np.nan
     
-    # #check that wind speed and direction are within logical limits
-    # df.wind_speed[df.wind_speed < 0.] = np.nan
-    # df.wind_dir[df.wind_dir < 0.] = np.nan
-    # df.wind_dir[df.wind_dir > 360.] = np.nan
+    #check that wind speed and direction are within logical limits
+    df.wind_speed[df.wind_speed < 0.] = np.nan
+    df.wind_dir[df.wind_dir < 0.] = np.nan
+    df.wind_dir[df.wind_dir > 360.] = np.nan
         
     
     
-    # #------------------------------------------------------------------------#
-    # #-----------------    INTEGRATING OVER PRECIPITATION    -----------------#
-    # #------------------------------------------------------------------------#
+    #------------------------------------------------------------------------#
+    #-----------------    INTEGRATING OVER PRECIPITATION    -----------------#
+    #------------------------------------------------------------------------#
     
-    # #integrate over a 1-hour period to get a cumulative sum of precipitation
-    # #    valid at the top of the hour, calculated from the previous 60 minutes
-    # #NOTE: the line below is a rolling sum so for each row/timestamp, there is
-    # #    a value calculated from the previous 60 minutes, but when ready, we
-    # #    will simply pluck the timestamps we need for the data conversion
-    # #    process from the dataframe, just like for all other variables.
-    # df['rain'] = pd.DataFrame(df.set_index('time').rain.rolling('60T').sum()).reset_index()['rain']
-    
-    
-    
-    # #------------------------------------------------------------------------#
-    # #-----------------    COLLECTING HOURLY OBSERVATIONS    -----------------#
-    # #------------------------------------------------------------------------#
-    # ''' What to do in the event of not a full 24-hour period '''
-    
-    # #we only need 1-hour observations, so remove all others from the dataset
-    # df = df[::60].set_index('time').reset_index()
+    #integrate over a 1-hour period to get a cumulative sum of precipitation
+    #    valid at the top of the hour, calculated from the previous 60 minutes
+    #NOTE: the line below is a rolling sum so for each row/timestamp, there is
+    #    a value calculated from the previous 60 minutes, but when ready, we
+    #    will simply pluck the timestamps we need for the data conversion
+    #    process from the dataframe, just like for all other variables.
+    df['rain'] = pd.DataFrame(df.set_index('time').rain.rolling('60T').sum()).reset_index()['rain']
     
     
     
-    # #------------------------------------------------------------------------#
-    # #--------------------------    COMPUTE MSLP    --------------------------#
-    # #------------------------------------------------------------------------#
+    #------------------------------------------------------------------------#
+    #-----------------    COLLECTING HOURLY OBSERVATIONS    -----------------#
+    #------------------------------------------------------------------------#
+    ''' What to do in the event of not a full 24-hour period '''
     
-    # #mean sea-level pressure is computed from the station pressure, the
-    # #    user-input elevation and the QC-ed temperature data
-    
-    # df['mslp'] = df.station_P*pow(1-(0.0065*elev)/(df.temp_C+0.0065*elev+273.15),-5.257)
-    
+    #we only need 1-hour observations, so remove all others from the dataset
+    df = df[::60].set_index('time').reset_index()
     
     
-    # #------------------------------------------------------------------------#
-    # #----------------------    CONVERT TO SI UNITS    -----------------------#
-    # #------------------------------------------------------------------------#
     
-    # #little_R formate requires data fields to be in a particular set of units
-    # #    depending on the field; the following fields must be converted
+    #------------------------------------------------------------------------#
+    #--------------------------    COMPUTE MSLP    --------------------------#
+    #------------------------------------------------------------------------#
     
-    # #station pressure and MSLP [hPa --> Pa]
-    # df.station_P *= 100.
-    # df.mslp *= 100.
+    #mean sea-level pressure is computed from the station pressure, the
+    #    user-input elevation and the QC-ed temperature data
     
-    # #temperature [C --> K]
-    # df.temp_C += 273.15
-    
-    # #precipitation [mm --> cm]
-    # df.rain /= 10.
+    df['mslp'] = df.station_P*pow(1-(0.0065*elev)/(df.temp_C+0.0065*elev+273.15),-5.257)
     
     
-    # #------------------------------------------------------------------------#
     
-    # #default missing values
-    # missing_val = -888888.00000
-    # missing_QC = -888888
-    # default_QC = 0
+    #------------------------------------------------------------------------#
+    #----------------------    CONVERT TO SI UNITS    -----------------------#
+    #------------------------------------------------------------------------#
+    
+    #little_R formate requires data fields to be in a particular set of units
+    #    depending on the field; the following fields must be converted
+    
+    #station pressure and MSLP [hPa --> Pa]
+    df.station_P *= 100.
+    df.mslp *= 100.
+    
+    #temperature [C --> K]
+    df.temp_C += 273.15
+    
+    #precipitation [mm --> cm]
+    df.rain /= 10.
+    
+    
+    #------------------------------------------------------------------------#
+    
+    #default missing values
+    missing_val = -888888.00000
+    missing_QC = -888888
+    default_QC = 0
           
-    # #replace all NaNs within the dataset with the missing value flag (-888888.00000)
-    # df = df.where(df.notna(), other=missing_val)
-    # #df = df.fillna(missing_val)
+    #replace all NaNs within the dataset with the missing value flag (-888888.00000)
+    df = df.where(df.notna(), other=missing_val)
+    #df = df.fillna(missing_val)
 
     
-    # #loop through each row of the dataframe to generate the header, data,
-    # #    ending record, and tail integer lines from said row, then write it to
-    # #    a file
-    # for i in range(len(df)):
+    #loop through each row of the dataframe to generate the header, data,
+    #    ending record, and tail integer lines from said row, then write it to
+    #    a file
+    for i in range(len(df)):
     
-    #     #------------------------------------------------------------------------#
-    #     #-----------------------------    HEADER    -----------------------------#
-    #     #------------------------------------------------------------------------#
+        #------------------------------------------------------------------------#
+        #-----------------------------    HEADER    -----------------------------#
+        #------------------------------------------------------------------------#
         
-    #     #each station's file output (for which, but a single hourly record is
-    #     #    written) will contain the crazy-long header line, followed by the
-    #     #    data record line (there will only be one), followed by the
-    #     #    ending-record line, followed by the 'tail integers' line (just 3
-    #     #    integer fields indicating the number of valid fields for the
-    #     #    observation, the number of errors, and the number of warnings,
-    #     #    respectively); both the ending-record line and tail-integers lines
-    #     #    are fairly meaningless, but required to achieve the appropriate
-    #     #    data format
+        #each station's file output (for which, but a single hourly record is
+        #    written) will contain the crazy-long header line, followed by the
+        #    data record line (there will only be one), followed by the
+        #    ending-record line, followed by the 'tail integers' line (just 3
+        #    integer fields indicating the number of valid fields for the
+        #    observation, the number of errors, and the number of warnings,
+        #    respectively); both the ending-record line and tail-integers lines
+        #    are fairly meaningless, but required to achieve the appropriate
+        #    data format
          
-    #     #Latitude [float]; retrieve from 3D_main.py
-    #     lat = lat
-    #     #Longitude [float]; retrieve from 3D_main.py
-    #     lon = lon
-    #     #ID [string]; need only be human-readable for this obs type
-    #     ID = '3D-PAWS'
-    #     #Name [string]; retrieve from station name in 3D_main.py
-    #     name = site_ID
-    #     #Platform (FM‑Code) [string]; should remain constant for each station
-    #     platform = 'FM-12 SYNOP'
-    #     #Source [string]; should remain constant for each station; can be any text
-    #     source = 'SOURCE'
-    #     #Elevation [float]; retrieve from 3D_main.py
-    #     elevation = elev
-    #     #Valid fields [integer]; should remain constant for each station
-    #     valid_fields = 1
-    #     #Num. errors [integer]; should remain constant for each station
-    #     num_errors = 0
-    #     #Num. warnings [integer]; should remain constant for each station
-    #     num_warnings = 0
-    #     #Sequence number [integer]; *should* always be zero
-    #     seq_num = 0
-    #     #Num. duplicates [integer]; *should* always be zero because duplicates are removed
-    #     num_dups = 0
-    #     #Is sounding? [string]; should remain constant for each station
-    #     is_sounding = 'F'
-    #     #Is bogus? [string]; should remain constant for each station
-    #     is_bogus = 'F'
-    #     #Discard? [string]; should remain constant for each station
-    #     to_discard = 'F'
-    #     #Unix time [integer]; should remain constant for each station
-    #     unix_time = missing_QC
-    #     #Julian day [integer]; should remain constant for each station
-    #     julian_day = missing_QC
-    #     #Date [string]; retrieved from the dataframe, converted to a string, and removed of
-    #     #    any whitespace, colons, and dashes
-    #     date = str(df.time[i]).replace(" ","").replace(":","").replace("-","")
-    #     #SLP [float; Pa], QC; retrieve from dataframe
-    #     slp = df.mslp[i]
-    #     slp_QC = default_QC
-    #     #Ref Pressure [float; Pa], QC; should remain constant for each station; don't need
-    #     ref_P = missing_val
-    #     ref_P_QC = default_QC
-    #     #Ground Temp [float; K], QC; should remain constant foe each station
-    #     ground_T = missing_val
-    #     ground_T_QC = default_QC
-    #     #SST [float; K], QC; should remain constant for each station; don't need
-    #     sst = missing_val
-    #     sst_QC = default_QC
-    #     #SFC Pressure [float; Pa], QC; should remain constant for each station; don't need
-    #     sfc_P = missing_val
-    #     sfc_P_QC = default_QC
-    #     #Precip [float; cm], QC; retrieve from dataframe; don't need
-    #     precip = df.rain[i]
-    #     precip_QC = default_QC
-    #     #Daily Max T [float; K], QC; should remain constant for each station; don't need
-    #     max_T = missing_val
-    #     max_T_QC = default_QC
-    #     #Daily Min T [float; K], QC; should remain constant for each station; don't need
-    #     day_min_T = missing_val
-    #     day_min_T_QC = default_QC
-    #     #Night Min T [float; K], QC; should remain constant for each station; don't need
-    #     night_min_T = missing_val
-    #     night_min_T_QC = default_QC
-    #     #3hr Pres Change [float; Pa], QC; should remain constant for each station; don't need
-    #     three_hr_P = missing_val
-    #     three_hr_P_QC = default_QC
-    #     #24hr Pres Change [float; Pa], QC; should remain constant for each station; don't need
-    #     twofour_P = missing_val
-    #     twofour_P_QC = default_QC
-    #     #Cloud cover [float], QC; should remain constant for each station; don't need
-    #     clouds = missing_val
-    #     clouds_QC = default_QC
-    #     #Ceiling [float; m], QC; should remain constant for each station; don't need
-    #     ceiling = missing_val
-    #     ceiling_QC = default_QC
-    #     #Precipitable water [float; cm], QC; should remain constant for each station; don't need
-    #     precip_W = missing_val
-    #     precip_W_QC = default_QC
+        #Latitude [float]; retrieve from 3D_main.py
+        lat = lat
+        #Longitude [float]; retrieve from 3D_main.py
+        lon = lon
+        #ID [string]; need only be human-readable for this obs type
+        ID = '3D-PAWS'
+        #Name [string]; retrieve from station name in 3D_main.py
+        name = site_ID
+        #Platform (FM‑Code) [string]; should remain constant for each station
+        platform = 'FM-12 SYNOP'
+        #Source [string]; should remain constant for each station; can be any text
+        source = 'SOURCE'
+        #Elevation [float]; retrieve from 3D_main.py
+        elevation = elev
+        #Valid fields [integer]; should remain constant for each station
+        valid_fields = 1
+        #Num. errors [integer]; should remain constant for each station
+        num_errors = 0
+        #Num. warnings [integer]; should remain constant for each station
+        num_warnings = 0
+        #Sequence number [integer]; *should* always be zero
+        seq_num = 0
+        #Num. duplicates [integer]; *should* always be zero because duplicates are removed
+        num_dups = 0
+        #Is sounding? [string]; should remain constant for each station
+        is_sounding = 'F'
+        #Is bogus? [string]; should remain constant for each station
+        is_bogus = 'F'
+        #Discard? [string]; should remain constant for each station
+        to_discard = 'F'
+        #Unix time [integer]; should remain constant for each station
+        unix_time = missing_QC
+        #Julian day [integer]; should remain constant for each station
+        julian_day = missing_QC
+        #Date [string]; retrieved from the dataframe, converted to a string, and removed of
+        #    any whitespace, colons, and dashes
+        date = str(df.time[i]).replace(" ","").replace(":","").replace("-","")
+        #SLP [float; Pa], QC; retrieve from dataframe
+        slp = df.mslp[i]
+        slp_QC = default_QC
+        #Ref Pressure [float; Pa], QC; should remain constant for each station; don't need
+        ref_P = missing_val
+        ref_P_QC = default_QC
+        #Ground Temp [float; K], QC; should remain constant foe each station
+        ground_T = missing_val
+        ground_T_QC = default_QC
+        #SST [float; K], QC; should remain constant for each station; don't need
+        sst = missing_val
+        sst_QC = default_QC
+        #SFC Pressure [float; Pa], QC; should remain constant for each station; don't need
+        sfc_P = missing_val
+        sfc_P_QC = default_QC
+        #Precip [float; cm], QC; retrieve from dataframe; don't need
+        precip = df.rain[i]
+        precip_QC = default_QC
+        #Daily Max T [float; K], QC; should remain constant for each station; don't need
+        max_T = missing_val
+        max_T_QC = default_QC
+        #Daily Min T [float; K], QC; should remain constant for each station; don't need
+        day_min_T = missing_val
+        day_min_T_QC = default_QC
+        #Night Min T [float; K], QC; should remain constant for each station; don't need
+        night_min_T = missing_val
+        night_min_T_QC = default_QC
+        #3hr Pres Change [float; Pa], QC; should remain constant for each station; don't need
+        three_hr_P = missing_val
+        three_hr_P_QC = default_QC
+        #24hr Pres Change [float; Pa], QC; should remain constant for each station; don't need
+        twofour_P = missing_val
+        twofour_P_QC = default_QC
+        #Cloud cover [float], QC; should remain constant for each station; don't need
+        clouds = missing_val
+        clouds_QC = default_QC
+        #Ceiling [float; m], QC; should remain constant for each station; don't need
+        ceiling = missing_val
+        ceiling_QC = default_QC
+        #Precipitable water [float; cm], QC; should remain constant for each station; don't need
+        precip_W = missing_val
+        precip_W_QC = default_QC
         
          
-    #     #the formatted line containing the header fields
-    #     header = "{:20.5f}{:20.5f}{:40s}{:>40s}{:>40s}{:>40s}{:20.5f}{:10d}{:10d}{:10d}{:10d}{:10d}{:>10s}{:>10s}{:>10s}{:10d}{:10d}{:>20s}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}".format(lat,lon,ID,name,platform,source,elevation,valid_fields,num_errors,num_warnings,seq_num,num_dups,is_sounding,is_bogus,to_discard,unix_time,julian_day,date,slp,slp_QC,ref_P,ref_P_QC,ground_T,ground_T_QC,sst,sst_QC,sfc_P,sfc_P_QC,precip,precip_QC,max_T,max_T_QC,day_min_T,day_min_T_QC,night_min_T,night_min_T_QC,three_hr_P,three_hr_P_QC,twofour_P,twofour_P_QC,clouds,clouds_QC,ceiling,ceiling_QC,precip_W,precip_W_QC)    
-    #     header = header + '\n'
+        #the formatted line containing the header fields
+        header = "{:20.5f}{:20.5f}{:40s}{:>40s}{:>40s}{:>40s}{:20.5f}{:10d}{:10d}{:10d}{:10d}{:10d}{:>10s}{:>10s}{:>10s}{:10d}{:10d}{:>20s}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}".format(lat,lon,ID,name,platform,source,elevation,valid_fields,num_errors,num_warnings,seq_num,num_dups,is_sounding,is_bogus,to_discard,unix_time,julian_day,date,slp,slp_QC,ref_P,ref_P_QC,ground_T,ground_T_QC,sst,sst_QC,sfc_P,sfc_P_QC,precip,precip_QC,max_T,max_T_QC,day_min_T,day_min_T_QC,night_min_T,night_min_T_QC,three_hr_P,three_hr_P_QC,twofour_P,twofour_P_QC,clouds,clouds_QC,ceiling,ceiling_QC,precip_W,precip_W_QC)    
+        header = header + '\n'
           
          
-    #     #------------------------------------------------------------------------#
-    #     #--------------------------    DATA RECORD    ---------------------------#
-    #     #------------------------------------------------------------------------#
+        #------------------------------------------------------------------------#
+        #--------------------------    DATA RECORD    ---------------------------#
+        #------------------------------------------------------------------------#
          
-    #     #Pressure (Pa) QC
-    #     pressure = df.station_P[i]
-    #     press_QC = default_QC
-    #     #Height (m) QC; should always be the same as the elevation of the stations
-    #     height = elev
-    #     height_QC = default_QC
-    #     #Temperature (K) QC
-    #     temperature = df.temp_C[i]
-    #     temp_QC = default_QC
-    #     #Dewpoint (K) QC	
-    #     dewpoint = missing_val
-    #     dewpoint_QC = default_QC
-    #     #Wind speed (m/s) QC
-    #     wind_speed = df.wind_speed[i]
-    #     windspeed_QC = default_QC
-    #     #Winddirection (deg) QC
-    #     wind_dir = df.wind_dir[i]
-    #     winddir_QC = default_QC
-    #     #WindU (m/s) QC
-    #     windU = missing_val
-    #     windU_QC = default_QC
-    #     #WindV (m/s) QC
-    #     windV = missing_val
-    #     windV_QC = default_QC
-    #     #Relativehumidity (%) QC
-    #     humidity = df.htu21d_relhum[i]
-    #     humidity_QC = default_QC
-    #     #Thickness (m) QC
-    #     thickness = missing_val
-    #     thickness_QC = default_QC
+        #Pressure (Pa) QC
+        pressure = df.station_P[i]
+        press_QC = default_QC
+        #Height (m) QC; should always be the same as the elevation of the stations
+        height = elev
+        height_QC = default_QC
+        #Temperature (K) QC
+        temperature = df.temp_C[i]
+        temp_QC = default_QC
+        #Dewpoint (K) QC	
+        dewpoint = missing_val
+        dewpoint_QC = default_QC
+        #Wind speed (m/s) QC
+        wind_speed = df.wind_speed[i]
+        windspeed_QC = default_QC
+        #Winddirection (deg) QC
+        wind_dir = df.wind_dir[i]
+        winddir_QC = default_QC
+        #WindU (m/s) QC
+        windU = missing_val
+        windU_QC = default_QC
+        #WindV (m/s) QC
+        windV = missing_val
+        windV_QC = default_QC
+        #Relativehumidity (%) QC
+        humidity = df.htu21d_relhum[i]
+        humidity_QC = default_QC
+        #Thickness (m) QC
+        thickness = missing_val
+        thickness_QC = default_QC
           
-    #     #the formatted line containing the data fields
-    #     data = "{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}".format(pressure,press_QC,height,height_QC,temperature,temp_QC,dewpoint,dewpoint_QC,wind_speed,windspeed_QC,wind_dir,winddir_QC,windU,windU_QC,windV,windV_QC,humidity,humidity_QC,thickness,thickness_QC)
-    #     data = data + "\n"
+        #the formatted line containing the data fields
+        data = "{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}".format(pressure,press_QC,height,height_QC,temperature,temp_QC,dewpoint,dewpoint_QC,wind_speed,windspeed_QC,wind_dir,winddir_QC,windU,windU_QC,windV,windV_QC,humidity,humidity_QC,thickness,thickness_QC)
+        data = data + "\n"
          
          
          
-    #     #------------------------------------------------------------------------#
-    #     #-------------------------    ENDING RECORD    --------------------------#
-    #     #------------------------------------------------------------------------#
+        #------------------------------------------------------------------------#
+        #-------------------------    ENDING RECORD    --------------------------#
+        #------------------------------------------------------------------------#
          
-    #     #this line signifies the end of the data record and will go immediately
-    #     #    below the last data record
+        #this line signifies the end of the data record and will go immediately
+        #    below the last data record
          
-    #     end_flag = -777777.00000
+        end_flag = -777777.00000
         
-    #     end_record = "{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}".format(end_flag,default_QC,end_flag,default_QC,missing_val,default_QC,missing_val,default_QC,missing_val,default_QC,missing_val,default_QC,missing_val,default_QC,missing_val,default_QC,missing_val,default_QC,missing_val,default_QC)
-    #     end_record = end_record + "\n"
+        end_record = "{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}{:13.5f}{:7d}".format(end_flag,default_QC,end_flag,default_QC,missing_val,default_QC,missing_val,default_QC,missing_val,default_QC,missing_val,default_QC,missing_val,default_QC,missing_val,default_QC,missing_val,default_QC,missing_val,default_QC)
+        end_record = end_record + "\n"
          
          
-    #     #------------------------------------------------------------------------#
-    #     #-------------------------    TAIL INTEGERS    --------------------------#
-    #     #------------------------------------------------------------------------#
+        #------------------------------------------------------------------------#
+        #-------------------------    TAIL INTEGERS    --------------------------#
+        #------------------------------------------------------------------------#
         
-    #     #this is the 'tail integer' line that signifies the end of the entire
-    #     #    observation
-    #     tail_integers = "      1      0      0\n"
+        #this is the 'tail integer' line that signifies the end of the entire
+        #    observation
+        tail_integers = "      1      0      0\n"
         
         
         
-    #     #------------------------------------------------------------------------#
-    #     #-------------------------    WRITE TO FILE    --------------------------#
-    #     #------------------------------------------------------------------------#
+        #------------------------------------------------------------------------#
+        #-------------------------    WRITE TO FILE    --------------------------#
+        #------------------------------------------------------------------------#
         
-    #     #the name of the file that will be created; this includes the directory
-    #     #    in which the file(s) will be saved ('save_dir' from 3D_main.py); it
-    #     #    includes the ID, name of the station, and the date/time in the file
-    #     #    name; there is no file extension
-    #     filename = "{}{}_{}_{}".format(save_dir,ID,name,date)
+        #the name of the file that will be created; this includes the directory
+        #    in which the file(s) will be saved ('save_dir' from 3D_main.py); it
+        #    includes the ID, name of the station, and the date/time in the file
+        #    name; there is no file extension
+        filename = "{}{}_{}_{}".format(save_dir,ID,name,date)
         
-    #     #create the file by opening it in write mode; this means that previous
-    #     #    files with this name will be completely overwritten
-    #     #NOTE: because time is included in 'date' to the minute, there should be a
-    #     #    single, uniquely-named file for each observation from every station
-    #     file = open(filename, 'w')
-    #     #write the header, the data, the ending record, and tail integers lines to
-    #     #    the file, in that specific order!
-    #     file.write(header + data + end_record + tail_integers)
-    #     #close the file when finished
-    #     file.close()
+        #create the file by opening it in write mode; this means that previous
+        #    files with this name will be completely overwritten
+        #NOTE: because time is included in 'date' to the minute, there should be a
+        #    single, uniquely-named file for each observation from every station
+        file = open(filename, 'w')
+        #write the header, the data, the ending record, and tail integers lines to
+        #    the file, in that specific order!
+        file.write(header + data + end_record + tail_integers)
+        #close the file when finished
+        file.close()
     
     
-    
-    return df
+    ''' DON'T NEED TO RETURN THE DATAFRAME WITH THIS FUNCTION; HERE IT IS ONLY
+        NECESSARY FOR EVALUATING THE PROCEDURES WITHIN'''
+    #return df
     
 
 
