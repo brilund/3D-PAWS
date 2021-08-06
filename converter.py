@@ -53,9 +53,12 @@ Created on Mon May 17 15:16:55 2021
 #    
 #
 #NOTES: you must select a filepath in 3D_main.py (the 'directory' variable)
-#       that has data for the time period chosen by 'mintime' and 'maxtime' in
-#       3D_main.py. After that, even if no other sensor folder has data, the
-#       program should run normally.
+#       that has data on either side of the time period chosen by 'mintime'
+#       and 'maxtime' in 3D_main.py. After that, even if no other sensor
+#       folder has data, the program should run normally. This means that if
+#       your time frame is 202001010000 - 202001020000 and the chosen sensor
+#       does not have data for that period but has data before AND after that,
+#       the program will still run.
 #       Even if other sensor folders (other than the first one read in as set
 #       by 'directory' in 3D_main.py) do not have data for the selected
 #       timeframe, BUT there is data in the sensor folder, the program will
@@ -284,7 +287,7 @@ def convert(sensor, directory, site_ID, elev, lat, lon, df, mintime, maxtime, sa
         df = df.set_index('time').sort_index().reset_index()
         
     ### END OF 'subfolder'/'sensor' LOOP ###
-    
+##############################################################################
     ''' Consider turning everything above this line into a function because
         the quality assurance procedure will also need this'''
         

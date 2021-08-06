@@ -233,8 +233,8 @@ longitude = 34.222893 #longitude in decimal degress of the station being read in
 #    from the beginning of the time period, set mintime = "" and set 'maxtime'
 #    to your end date/time. Vice versa for plotting to the end of the whole
 #    time period
-mintime = "2019-03-04 10:00"
-maxtime = "2019-03-07 19:00"
+mintime = "2019-04-13 16:00"
+maxtime = "2019-04-15 00:00"
 
 #set this to reflect the type of plots you want (i.e. daily, weekly, monthly,
 #    specified time frame); see the How To Use section for a list of accepted
