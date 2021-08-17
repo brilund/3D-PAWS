@@ -100,15 +100,15 @@ def _smooth_params(averaged, avg_window):
     
     #if plotting averaged data, check that the averaging window is valid
     if averaged == True or averaged == "static" or averaged == "resampled":
-        if avg_window < 1:
-            raise ValueError("Averaging window must be greater than or equal to 1.")
+        if avg_window < 1 or type(avg_window) != int:
+            raise ValueError("Averaging window must be an integer greater than or equal to 1.")
         elif avg_window == 1:
             #setting the averaging window to 1 is equivalent to plotting raw data,
             #    so set 'averaged' to False and inform the user
             print("Averaging window set to 1. Plotting raw data...")
             averaged = False
         # elif avg_window >= len(df):
-        #     raise ValueError("Averaging window must be less that the total number of data points.")
+        #     raise ValueError("Averaging window must be less than the total number of data points.")
         else:
             #All other conditions are accepted
             pass
@@ -164,7 +164,7 @@ def input_checker(sensor, var_name, units, averaged, avg_window):
     
     #check whether 'sensor' (case insensitive) equals any of the accepted
     #    options in 'sensor_list'...
-    if sensor.lower() == sensor_list[0] or sensor_list[1]: #BMP180/280
+    if sensor.lower() == sensor_list[0] or sensor.lower() == sensor_list[1]: #BMP180/280
         
         #...if yes, check that 'var_name' was specificed appropriately and is
         #    associated with 'sensor'...

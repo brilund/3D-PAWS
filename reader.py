@@ -439,7 +439,6 @@ def bmp(directory, wildcard):
         len(SLP_inHg) == len(alt):
         #if all arrays have the same number of elements, then the read/append
         #    conditions above were met and everything is good.
-        print("Number of elements in each variable array are equal. Continue...\n")
         
         if len(month) == 0: #can be any variable since now we know they are
         #    all equal in size/length
@@ -587,7 +586,6 @@ def htu21d(directory, wildcard):
         == len(temp_F) == len(rel_hum):
         #if all arrays have the same number of elements, then the read/append
         #    conditions above were met and everything is good.
-        print("Number of elements in each variable array are equal. Continue...\n")
         
         if len(month) == 0: #can be any variable since now we know they are
         #    all equal in size/length
@@ -732,7 +730,6 @@ def mcp9808(directory, wildcard):
         == len(temp_F):
         #if all arrays have the same number of elements, then the read/append
         #    conditions above were met and everything is good.
-        print("Number of elements in each variable array are equal. Continue...\n")
         
         if len(month) == 0: #can be any variable since now we know they are
         #    all equal in size/length
@@ -882,7 +879,6 @@ def si1145(directory, wildcard):
         == len(ir) == len(uv) == len(uvi):
         #if all arrays have the same number of elements, then the read/append
         #    conditions above were met and everything is good.
-        print("Number of elements in each variable array are equal. Continue...\n")
         
         if len(month) == 0: #can be any variable since now we know they are
         #    all equal in size/length
@@ -1038,7 +1034,6 @@ def rain_gauge(directory, wildcard):
     if len(month) == len(day) == len(year) == len(hour) == len(minute) == len(rain):
         #if all arrays have the same number of elements, then the read/append
         #    conditions above were met and everything is good.
-        print("Number of elements in each variable array are equal. Continue...\n")
         
         if len(month) == 0: #can be any variable since now we know they are
         #    all equal in size/length
@@ -1091,11 +1086,10 @@ def rain_gauge(directory, wildcard):
     missing_reports = call_processor[1]
     
     
-    ############################ Converting Data #############################
+    ########################### Add Special Column ###########################
     
-    #converting precipitation amounts to user-defined units is now performed
-    #    in the plotter program so that we may remove the 'units' input from
-    #    this function
+    #we have moved the data conversion portion to the plotter function so that
+    #    we may remove the 'units' positional argument from the function
     
     #add a column to the dataframe that essentially masks all values except zeroes;
     #    this ought to more clearly show when data was being recorded but there
@@ -1216,7 +1210,6 @@ def wind_vane(directory, wildcard):
         #== len(second):
         #if all arrays have the same number of elements, then the read/append
         #    conditions above were met and everything is good.
-        print("Number of elements in each variable array are equal. Continue...\n")
         
         if len(month) == 0: #can be any variable since now we know they are
         #    all equal in size/length
@@ -1371,7 +1364,6 @@ def anemometer(directory, wildcard):
     if len(month) == len(day) == len(year) == len(hour) == len(minute) == len(wind_speed):
         #if all arrays have the same number of elements, then the read/append
         #    conditions above were met and everything is good.
-        print("Number of elements in each variable array are equal. Continue...\n")
         
         if len(month) == 0: #can be any variable since now we know they are
         #    all equal in size/length

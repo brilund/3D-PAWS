@@ -116,23 +116,23 @@ def time_checker(mintime, maxtime, plot_opt, df):
     #    requirement helps weed out a number of potentially incompatible formats,
     #    making the creation of the following error checkers more manageable!
     if mintime == "" and len(maxtime) == 16:
-            try:
-                pd.to_datetime(maxtime, format='%Y-%m-%d %H:%M')
-            except ValueError:
-                raise ValueError("Incorrect format for 'maxtime'; should be YYYY-MM-DD HH:mm")
+        try:
+            pd.to_datetime(maxtime, format='%Y-%m-%d %H:%M')
+        except ValueError:
+            raise ValueError("Incorrect format for 'maxtime'; should be YYYY-MM-DD HH:mm")
             
     elif maxtime == "" and len(mintime) == 16:
-            try:
-                pd.to_datetime(mintime, format='%Y-%m-%d %H:%M')
-            except ValueError:
-                raise ValueError("Incorrect format for 'mintime'; should be YYYY-MM-DD HH:mm")
+        try:
+            pd.to_datetime(mintime, format='%Y-%m-%d %H:%M')
+        except ValueError:
+            raise ValueError("Incorrect format for 'mintime'; should be YYYY-MM-DD HH:mm")
         
     elif len(mintime) == 16 and len(maxtime) == 16: #they should include 16 characters
-            try:
-                pd.to_datetime(mintime, format='%Y-%m-%d %H:%M')
-                pd.to_datetime(maxtime, format='%Y-%m-%d %H:%M')
-            except ValueError:
-                raise ValueError("Incorrect format for 'mintime'/'maxtime'; should be YYYY-MM-DD HH:mm")  
+        try:
+            pd.to_datetime(mintime, format='%Y-%m-%d %H:%M')
+            pd.to_datetime(maxtime, format='%Y-%m-%d %H:%M')
+        except ValueError:
+            raise ValueError("Incorrect format for 'mintime'/'maxtime'; should be YYYY-MM-DD HH:mm")  
                 
     elif mintime == "" and maxtime == "":
         pass
@@ -141,20 +141,17 @@ def time_checker(mintime, maxtime, plot_opt, df):
         #anything that is not an empty string or 16 characters in length
         #    automatically fails the checks
         raise ValueError("Incorrect format for 'mintime'; should be YYYY-MM-DD HH:mm")
+    
         
     #then check to see if 'mintime' and 'maxtime' are within the dataset that was
     #    read in
-    #Note: the method min() and max() are functions of both DataFrames and
-    #      datetimeindex, so if we wanted, we could also do this: df.time.min()
     if pd.to_datetime(mintime) < df.time.min() or \
         pd.to_datetime(mintime) > df.time.max() or \
             pd.to_datetime(maxtime) > df.time.max() or \
                 pd.to_datetime(maxtime) < df.time.min():
-        print("'mintime'/'maxtime' are outside the range of time.")
-        print("The minimum start time is %s." % str(df.time.min()))
-        print("The maximum end time is %s.\n" % str(df.time.max()))
+        raise ValueError("'mintime'/'maxtime' are outside the range of time.\nThe minimum start time is %s.\nThe maximum end time is %s.\n" % (str(df.time.min()),str(df.time.max())))
         #remind the user what their start/end time limits are^
-        sys.exit()
+        # sys.exit()
     
     #check that 'mintime' is explicitly less than 'maxtime'
     if pd.to_datetime(mintime) >= pd.to_datetime(maxtime):
@@ -198,7 +195,7 @@ def time_checker(mintime, maxtime, plot_opt, df):
     if plot_opt == "weekly" and ((df.time[maxtime] - df.time[mintime]) < pd.Timedelta(weeks=1)):
         #if the amount of time in the entire dataset read in is less than the
         #    required time...
-        if (df.time.max() - df.time.min() < pd.Timdeelta(weeks=1)):
+        if (df.time.max() - df.time.min() < pd.Timedelta(weeks=1)):
             print("Total time in dataset is less than 1 week. Changing to default plotter.\n")
             plot_opt = "plotter" #...set plot_opt to the default plotter...
         else: #...otherwise, raise the error message
