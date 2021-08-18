@@ -233,7 +233,7 @@ avg_window = 30
 #this variable toggles the use of the quality assurance procedure; set to
 #    False for no quality assurance test to be performed; set to True for the
 #    opposite
-qa = False
+qual_A = False
 
 #this variable toggles the data conversion procedure; when set to True, a 
 #    number of other input options will be ignored and the data read in will
@@ -363,7 +363,7 @@ if mintime != 0 or maxtime != df.index[-1]:
     specific column indices'''
 
 #call the quality assurance function
-if qa == True:
+if qual_A == True:
     call_QA = quality(sensor, mintime, maxtime, df)
 else:
     pass

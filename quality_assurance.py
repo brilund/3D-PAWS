@@ -49,9 +49,9 @@ Created on Thu Dec 10 15:20:44 2020
 #    2. Import this function in the parent program (no need for file
 #       extensions):
 #
-#       a) from time_checker import time_checker
+#       a) from quality_assurance import quality
 #       ... or...
-#       b) import time_checker as tc
+#       b) import quality_assurance as qualA
 #
 #    3. Call the function in the parent program, ensuring that you pass the 
 #       appropriate attributes/parameters:
@@ -87,6 +87,8 @@ Created on Thu Dec 10 15:20:44 2020
 #    Variables that are computed using the measured variables (e.g.
 #    temperature in Fahrenheit) are NOT checked, but are flagged if any
 #    one of the measured variables used to calculate it are flagged.
+
+
 
 ##############################################################################
 #########################    IMPORTING MODULES    ############################
