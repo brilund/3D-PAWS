@@ -42,20 +42,20 @@ Created on Thu Nov  5 15:13:43 2020
 #
 #HOW TO USE:
 #    1. Save this file/program in the same directory as the parent program you
-#       will use this function in conjunction with
+#       will use this function in conjunction with (3D_main.py)
 #    2. Import this function in the parent program (no need for file
 #       extensions):
 #
-#       a) from plotter import plotter
+#       a) from input_checker import input_checker
 #       ... or...
-#       b) import plotter as pltr
+#       b) import input_checker as inputs
 #
 #    3. Call the function in the parent program, ensuring that you pass the 
 #       appropriate attributes/parameters:
 #
-#       a) call_plotter = plotter(mintime, maxtime, df)
+#       a) check_inputs = input_checker(sensor, var_name, units, averaged, avg_window, reformat, elevation, latitude, longitude)
 #       ... or...
-#       b) call_plotter = pltr.plotter(mintime, maxtime, df)
+#       b) check_inputs = inputs.input_checker(sensor, var_name, units, averaged, avg_window, reformat, elevation, latitude, longitude)
 #
 #    4. Run the parent program within terminal (e.g. "python main.py"),
 #       or open the parent program in Spyder and run from there.
@@ -67,9 +67,7 @@ Created on Thu Nov  5 15:13:43 2020
 #    
 #
 #
-#NOTES: At the moment, this program reads in all data (the whole dataframe)
-#       even if a subset of time is requested for plotting, analysis, etc.,
-#       which is a bit of an overkill
+#NOTES: 
 
 
 

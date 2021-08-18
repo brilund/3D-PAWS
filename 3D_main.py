@@ -29,10 +29,6 @@ Created on Thu Jun  4 16:05:12 2020
 #
 #Requirements:
 #    Python 3
-#    Numpy
-#    Matplotlib
-#    Glob
-#    Pandas
 #    Sys
 #
 #
@@ -70,6 +66,20 @@ Created on Thu Jun  4 16:05:12 2020
 #       specific conditions, two input directories, for sure)
 #
 #
+#Necessary files:
+#    The following files are required in the same directory as 3D_main.py in
+#    order for everything to function properly:
+#
+#    1. input_checker.py
+#    2. time_checker.py
+#    3. reader.py
+#    4. data_smoother.py
+#    5. plotter.py
+#    6. quality_assurance.py
+#    7. output.py
+#    8. converter.py
+#
+#
 #How to Use:
 #    1. Setup your folder structure:
 #        a) create a parent folder that will contain the subfolders for each
@@ -79,21 +89,31 @@ Created on Thu Jun  4 16:05:12 2020
 #           each station folder follow the same naming convention (e.g. 'bmp'
 #           for the BMP180 or BMP280, 'winddir' for wind direction from the
 #           wind vane, etc.)
-#    2. Change all variables in "USER OPTIONS" section to desired input
-#           sensor: bmp180, bmp280, htu21d, mcp9808, si1145, rain, anemometer, wind_vane
-#           directory
-#           save_dir
-#           wildcard
-#           site_ID
-#           var_name: temp_C, temp_F, rel_hum, alt, SLP_hPa, SLP_inHg,
+#    2. Change all variables in "USER OPTIONS" section to desired input; take
+#       note of the variable type required in brackets; you will be reminded
+#       of it in the USER OPTION(S) section
+#
+#           sensor: [string; case insensitive] bmp180, bmp280, htu21d, mcp9808,
+#                   si1145, rain, anemometer, wind_vane
+#           directory [string]
+#           save_dir [string]
+#           wildcard [string]
+#           site_ID [string]
+#           var_name: [string] temp_C, temp_F, rel_hum, alt, SLP_hPa, SLP_inHg,
 #                     station_P, vis, ir, uv, uvi (depends on sensor name)
-#           units: mm, inches, mps, kmph, mph, kts (depends on sensor name)
-#           averaged: True, static, resampled, False (simply uncomment the
+#           units: [string] mm, inches, mps, kmph, mph, kts (depends on sensor name)
+#           averaged: [string or boolean] True, static, resampled, False (simply uncomment the
 #                     option you want to use)
-#           mintime
-#           maxtime
-#           plot_opt: plotter (default), daily, weekly, monthly, "" (empty string; no plotting)
-#           tag
+#           avg_window: [integer]
+#           mintime: [string] "" (empty string), YYYY-MM-DD HH:MM
+#           maxtime: [string] "" (empty string), YYYY-MM-DD HH:MM
+#           qa: [boolean] True, False
+#           reformat: [boolean] True, False
+#           elevation: [float]
+#           latitude: [float]
+#           longitude: [float]
+#           plot_opt: [string] plotter (default), daily, weekly, monthly, "" (empty string; no plotting)
+#           tag [string]
 #    3. Run with "python 3D_main.py" in terminal, or open in
 #       Spyder and run from there.
 #
@@ -144,15 +164,12 @@ Created on Thu Jun  4 16:05:12 2020
 #########################    IMPORTING MODULES    ############################
 ##############################################################################
 
-import numpy as np
-import pandas as pd
 import sys
-import glob
 import reader
 from input_checker import input_checker
 from time_checker import time_checker
 from data_smoother import smoothing
-import quality_assurance as QA
+import quality_assurance as quality
 from converter import convert
 import plotter as pltr
 
@@ -275,14 +292,11 @@ averaged = check_inputs
 ###########################    READ IN FILE(S)    ############################
 ##############################################################################
 
-#call the appropriate function based on the sensor/variable name; need a bunch
-#    'if' statments here
-
-#read in the dataframe(s) by calling the function designed to read the data;
-#    this is pre-processed data being read in so any sorting, removal of
-#    duplicate timestamps, etc. is done before these dataframes are read into
-#    this program. However, any averaging (if specified) is performed in a
-#    separate program
+#read in the dataframe by calling the function designed to read the data based
+#    on the user-specified sensor; this is pre-processed data being read in so
+#    any sorting, removal of duplicate timestamps, etc. is done before these
+#    dataframes are read into this program. However, any averaging (if
+#    specified) is performed in a separate program
 
 if sensor.lower() == "bmp180" or sensor.lower() == "bmp280":
     call_reader = reader.bmp(directory, wildcard)
@@ -348,11 +362,11 @@ if mintime != 0 or maxtime != df.index[-1]:
     will likely muck up other portions of code that rely on
     specific column indices'''
 
-# #call the quality assurance function
-# if qa == True:
-#     call_QA = qa(sensor, mintime, maxtime, df)
-# else:
-#     pass
+#call the quality assurance function
+if qa == True:
+    call_QA = quality(sensor, mintime, maxtime, df)
+else:
+    pass
 
 
 

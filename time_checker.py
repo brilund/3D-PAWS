@@ -54,11 +54,11 @@ Created on Thu Jun  4 16:05:12 2020
 #    3. Call the function in the parent program, ensuring that you pass the 
 #       appropriate attributes/parameters:
 #
-#       a) call_time = time_checker(mintime, maxtime, df)
+#       a) check_time = time_checker(mintime, maxtime, plot_opt, df, reformat)
 #       ... or...
-#       b) call_time = tc.time_checker(mintime, maxtime, df)
+#       b) call_time = tc.time_checker(mintime, maxtime, plot_opt, df, reformat)
 #
-#    4. Run the parent program within terminal (e.g. "python BMP_plotter.py"),
+#    4. Run the parent program within terminal (e.g. "python 3D_main.py"),
 #       or open the parent program in Spyder and run from there.
 #
 #
@@ -302,19 +302,21 @@ def time_checker(mintime, maxtime, plot_opt, df, reformat):
     ##########################################################################
 
         print("------------------------------------------------------------------")
-        
-        #will have to return additional variables once the OUTPUT option is
-        #    implemented because some relevant output information is 
-        #    calculated here; must also return 'plot_opt' in the event that
-        #    the time frameset by the user is greater than the required 28 
-        #    days, but does not contain a first-of-the-month date/time
-        #    (e.g. mintime = "2017-10-01 00:01" and maxtime = "2017-10-28 00:01")
-        return mintime, maxtime, plot_opt, missing_report_times
     
     else:
-        #don't return missing_report_times if 'mintime' and 'maxtime' are set
-        #    as empty stings, indicating use of the WHOLE dataset
-        return mintime, maxtime, plot_opt
+        #set the variable intended to house missing timestamps within the
+        #    user-defined time frame as an empty list, just so there is
+        #    something to return to the main program
+        missing_report_times = []
+        
+        
+    #will have to return additional variables once the OUTPUT option is
+    #    implemented because some relevant output information is 
+    #    calculated here; must also return 'plot_opt' in the event that
+    #    the time frameset by the user is greater than the required 28 
+    #    days, but does not contain a first-of-the-month date/time
+    #    (e.g. mintime = "2017-10-01 00:01" and maxtime = "2017-10-28 00:01")
+    return mintime, maxtime, plot_opt, missing_report_times
     
 
 

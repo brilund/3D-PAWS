@@ -5,7 +5,72 @@ Created on Thu Dec 10 15:20:44 2020
 
 @author: blund
 """
+###############################################################################
+'''
+           _____   _____     _     ____        ___    ___   _____
+           |    \  |        / \    |   \       |  \  /  |   |
+           |____/  |__     /___\   |    |      |   \/   |   |__
+           | \     |      /     \  |    |      |        |   |
+           |  \    |____ /       \ |___/       |        |   |____
+'''
 
+#This code reads in all available sensor data (from a specific folder
+#    structure) and assigns flags to every datum based on several tiers of
+#    data quality assessment; this script and its functions are called from a
+#    parent program.
+#
+#Written by Brianna Lund
+#
+#QUESTIONS?
+#Email me at blund@ucar.edu
+#
+#LICENSE:
+#This code may be used and distributed freely, provided proper attribution is
+#    given to UCAR and the author.
+#
+#
+#REQUIREMENTS:
+#    Python 3
+#    Numpy
+#    Pandas
+#    Sys
+#
+#
+#HISTORY:
+#    Nov 03, 2020 - First Write; modified from original BMP_weekly_plotter.py
+#
+#
+#PLANNED FEATURES:
+#
+#
+#HOW TO USE:
+#    1. Save this file/program in the same directory as the parent program you
+#       will use this function in conjunction with
+#    2. Import this function in the parent program (no need for file
+#       extensions):
+#
+#       a) from time_checker import time_checker
+#       ... or...
+#       b) import time_checker as tc
+#
+#    3. Call the function in the parent program, ensuring that you pass the 
+#       appropriate attributes/parameters:
+#
+#       a) check_time = time_checker(mintime, maxtime, plot_opt, df, reformat)
+#       ... or...
+#       b) call_time = tc.time_checker(mintime, maxtime, plot_opt, df, reformat)
+#
+#    4. Run the parent program within terminal (e.g. "python 3D_main.py"),
+#       or open the parent program in Spyder and run from there.
+#
+#
+#Example header from files --> no file header(s)!!! (this could change...)
+#
+#Example data from files:
+#    
+#
+#
+#NOTES:
 
 
 #the naming convention for the columns added to the data frame are as

@@ -59,9 +59,9 @@ Created on Thu Nov 12 17:12:49 2020
 #    3. Call the function in the parent program, ensuring that you pass the 
 #       appropriate attributes/parameters:
 #
-#       a) call_bmp = bmp(directory, var_name, wildcard)
+#       a) call_bmp = bmp(directory, wildcard)
 #       ... or...
-#       b) call_bmp = reader.bmp(directory, var_name, wildcard)
+#       b) call_reader = reader.bmp(directory, wildcard)
 #
 #    4. Run the parent program with in terminal (e.g. "python 3D_main.py"),
 #       or open the parent program in Spyder and run from there.
