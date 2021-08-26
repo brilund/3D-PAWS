@@ -87,7 +87,7 @@ Created on Thu Jun  4 16:05:12 2020
 #    7. output.py
 #
 #
-#How to Use:
+#HOW TO USE:
 #    1. Change all variables in "USER OPTIONS" section to desired input; take
 #       note of the variable type required in brackets; you will be reminded
 #       of it in the USER OPTION(S) section
@@ -111,7 +111,8 @@ Created on Thu Jun  4 16:05:12 2020
 #    2. Run with "python 3D_main.py" in terminal, or open in
 #       Spyder and run from there.
 #
-#Folder Structure:
+#
+#FOLDER STRUCTURE:
 #    1. Create a parent folder (preferably named for the site the data are
 #           from) that will contain the subfolders for each sensor you want to
 #           read in. The full, absolute path to this folder should be what you
@@ -259,7 +260,7 @@ maxtime = ""
 #this variable toggles the use of the quality assurance procedure; set to
 #    False for no quality assurance test to be performed; set to True for the
 #    opposite
-QA = False
+qual_A = False
 
 #this variable toggles the data conversion procedure; when set to True, a 
 #    number of other input options will be ignored and the data read in will
@@ -398,7 +399,7 @@ if mintime != 0 or maxtime != df.index[-1]:
 
 #call the quality assurance function; since it only returns the flagged
 #    dataframe, this can be called "df"
-if QA:
+if qual_A:
     df = quality.QA_main(directory, sensor, mintime, maxtime, df)
 else:
     pass

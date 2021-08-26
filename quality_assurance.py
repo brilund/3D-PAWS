@@ -5,7 +5,114 @@ Created on Thu Dec 10 15:20:44 2020
 
 @author: blund
 """
+###############################################################################
+'''
+           _____   _____     _     ____        ___    ___   _____
+           |    \  |        / \    |   \       |  \  /  |   |
+           |____/  |__     /___\   |    |      |   \/   |   |__
+           | \     |      /     \  |    |      |        |   |
+           |  \    |____ /       \ |___/       |        |   |____
+'''
 
+#This code reads in all available sensor data (from a specific folder
+#    structure) and assigns flags to every datum based on several tiers of
+#    data quality assessment; this script and its functions are called from a
+#    parent program.
+#
+#Written by Brianna Lund
+#
+#QUESTIONS?
+#Email me at blund@ucar.edu
+#
+#LICENSE:
+#This code may be used and distributed freely, provided proper attribution is
+#    given to UCAR and the author.
+#
+#
+#REQUIREMENTS:
+#    Python 3
+#    Numpy
+#    Pandas
+#    Sys
+#
+#
+#HISTORY:
+#    First Write - Unknown
+#
+#
+#PLANNED FEATURES:
+#
+#
+#HOW TO USE:
+#    1. Setup a folder structure for the data following the instructions in
+#       'Folder Structure' section
+#    2. Save this file/program in the same directory as the parent program you
+#       will use this function in conjunction with
+#    3. Import this function in the parent program (no need for file
+#       extensions):
+#
+#       a) from quality_assurance import QA_main
+#       ... or...
+#       b) import quality_assurance as QA
+#
+#    4. Call the function in the parent program, ensuring that you pass the 
+#       appropriate attributes/parameters:
+#
+#       a) check_time = QA_main(directory, df)
+#       ... or...
+#       b) call_time = QA.QA_main(directory, df)
+#
+#    5. Run the parent program within terminal (e.g. "python 3D_main.py"),
+#       or open the parent program in Spyder and run from there.
+#
+#
+#FOLDER STRUCTURE:
+#    1. Create a parent folder (preferably named for the site the data are
+#           from) that will contain the subfolders for each sensor you want to
+#           read in. The full, absolute path to this folder should be what you
+#           give to the 'directory' variable in '3D_main.py'
+#    2. The parent folder should contain ONLY the subfolders for each sensor
+#           you want to read in, no additional files can be in this parent
+#           folder; it is critical that each sensor subfolder within each
+#           station folder follow the same naming convention (e.g. 'bmp' for
+#           the BMP180 or BMP280, 'winddir' for wind direction from the wind
+#           vane, etc.)
+#    3. If there are two BMP folders in the parent folder (e.g. BMP180
+#           and BMP280), you will either need to combine both folders into one,
+#           knowing that you will have a mixture of the two within your
+#           dataset, OR, eliminate one folder from the parent folder
+#       NOTE: it is important that the names of the folders within the parent
+#           folder (the folders that house the data files) make sense, in that,
+#           they contain a portion or all of the sensor name within the
+#           folder name itself (e.g. 'bmp' for the BMP180 or BMP280, 'winddir'
+#           for wind direction from the wind vane, etc.)
+#
+#
+#Example header from files --> no file header(s)!!! (this could change...)
+#
+#Example data from files:
+#    
+#
+#
+#NOTES: you must select a filepath in 3D_main.py (the 'directory' variable)
+#       that has data on either side of the time period chosen by 'mintime'
+#       and 'maxtime' in 3D_main.py. After that, even if no other sensor
+#       folder has data, the program should run normally. This means that if
+#       your time frame is 202001010000 - 202001020000 and the chosen sensor
+#       does not have data for that period but has data before AND after that,
+#       the program will still run.
+#       Even if other sensor folders (other than the first one read in as set
+#       by 'directory' in 3D_main.py) do not have data for the selected
+#       timeframe, BUT there is data in the sensor folder, the program will
+#       function as normal. However, if there is zero data within any sensor
+#       folder, the program will break and you should simply remove that
+#       sensor folder from the parent folder.
+#       If you have two BMP sensor folders (whether both have data or only one
+#       has data), you must eliminate one folder, or combine data from both
+#       folders into one BMP folder. Know that if you combine data into one
+#       folder and there are any overlapping timestamps, the second set of
+#       data read in with identical timestamps as the first set will be
+#       discarded. This will depend on your file naming convention.
 
 
 #the naming convention for the columns added to the data frame are as
@@ -84,7 +191,8 @@ def limits_test(sensor, df):
     tb_min = 0.       # mm
     tb_max = 5.       # mm this is based on a WMO maximum recorded 1-hour
                       #    rainfall total divided by 60 to yield the 1-minute
-                      #    total of 5 cm in a 1 minute period.
+                      #    total of 5 mm in a 1 minute period.
+    int_tb_max = 305. # mm this is the 1-hour cumulative maximum rainfall total
     
     #anemometer specs
     ws_min = 0.       # m/s
@@ -119,9 +227,9 @@ def limits_test(sensor, df):
         
         #find the indices in the dataframe for each measured variable such that
         #    the value is outside the specifications for the given variable
-        t_idx = df.index[(df.temp_C <= bmp_t_min) & (df.temp_C >= bmp_t_max)]
-        p_idx = df.index[(df.station_P <= bmp_p_min) & (df.station_P >= bmp_p_max)]
-        a_idx = df.index[(df.alt <= bmp_a_min) & (df.alt >= bmp_a_max)]
+        t_idx = df.index[(df.temp_C <= bmp_t_min) | (df.temp_C >= bmp_t_max)]
+        p_idx = df.index[(df.station_P <= bmp_p_min) | (df.station_P >= bmp_p_max)]
+        a_idx = df.index[(df.alt <= bmp_a_min) | (df.alt >= bmp_a_max)]
         
         #for the indices in the dataframe of values that are outside the
         #    specifications, change the values at the same indices in the zero
@@ -129,6 +237,11 @@ def limits_test(sensor, df):
         t_LC[t_idx] = 1
         p_LC[p_idx] = 1
         a_LC[a_idx] = 1
+        
+        # #create a new column full of zeros that will be flipped to ones if
+        # #    they fail the limits check
+        # df['t_LC'] = 0.
+        # df.t_LC = df.t_LC[df.index[(df.temp_C <= bmp_t_min) | (df.temp_C >= bmp_t_max)]] = 1
         
         #add new columns in the dataframe indicating with 1s where the
         #    temperature, pressure, altitude, and relative humidity (for BME
@@ -153,8 +266,8 @@ def limits_test(sensor, df):
         
         #find the indices in the dataframe for each measured variable such that
         #    the value is outside the specifications for the given variable
-        t_idx = df.index[(df.temp_C <= htu_t_min) & (df.temp_C >= htu_t_max)]
-        rh_idx = df.index[(df.rel_hum <= htu_rh_min) & (df.rel_hum >= htu_rh_max)]
+        t_idx = df.index[(df.temp_C <= htu_t_min) | (df.temp_C >= htu_t_max)]
+        rh_idx = df.index[(df.rel_hum <= htu_rh_min) | (df.rel_hum >= htu_rh_max)]
         
         #for the indices in the dataframe of values that are outside the
         #    specifications, change the values at the same indices in the zero
@@ -183,7 +296,7 @@ def limits_test(sensor, df):
         
         #find the indices in the dataframe for each measured variable such that
         #    the value is outside the specifications for the given variable
-        t_idx = df.index[(df.temp_C <= mcp_t_min) & (df.temp_C >= mcp_t_max)]
+        t_idx = df.index[(df.temp_C <= mcp_t_min) | (df.temp_C >= mcp_t_max)]
         
         #for the indices in the dataframe of values that are outside the
         #    specifications, change the values at the same indices in the zero
@@ -208,7 +321,7 @@ def limits_test(sensor, df):
         
         #find the indices in the dataframe for each measured variable such that
         #    the value is outside the specifications for the given variable
-        si_idx = df.index[(df.temp_C < si_min) & (df.temp_C > si_max)]
+        si_idx = df.index[(df.temp_C < si_min) | (df.temp_C > si_max)]
         
         #for the indices in the dataframe of values that are outside the
         #    specifications, change the values at the same indices in the zero
@@ -233,7 +346,7 @@ def limits_test(sensor, df):
         
         #find the indices in the dataframe for each measured variable such that
         #    the value is outside the specifications for the given variable
-        ws_idx = df.index[(df.wind_speed < ws_min) & (df.wind_speed > ws_max)]
+        ws_idx = df.index[(df.wind_speed < ws_min) | (df.wind_speed > ws_max)]
         
         #for the indices in the dataframe of values that are outside the
         #    specifications, change the values at the same indices in the zero
@@ -258,7 +371,7 @@ def limits_test(sensor, df):
         
         #find the indices in the dataframe for each measured variable such that
         #    the value is outside the specifications for the given variable
-        wd_idx = df.index[(df.wind_dir < wd_min) & (df.wind_dir > wd_max)]
+        wd_idx = df.index[(df.wind_dir < wd_min) | (df.wind_dir > wd_max)]
         
         #for the indices in the dataframe of values that are outside the
         #    specifications, change the values at the same indices in the zero
@@ -288,7 +401,7 @@ def limits_test(sensor, df):
         
         #find the indices in the dataframe for each measured variable such that
         #    the value is outside the specifications for the given variable
-        tb_idx = df.index[(df.rain < tb_min) & (df.rain > tb_max)]
+        tb_idx = df.index[(df.rain < tb_min) | (df.rain > tb_max)]
         
         #for the indices in the dataframe of values that are outside the
         #    specifications, change the values at the same indices in the zero
