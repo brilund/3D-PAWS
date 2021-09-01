@@ -453,10 +453,14 @@ def limits_test(sensor, df):
 
 #here is where we will flag any data blips (sharp, non-physical rises or
 #    decreases) or runs (extended periods of non-/low-variability) in data
+#NOTE: blip tests and run tests will vary depending on the sensor/variable
+#    type
 
 def temporal_test(sensor, df):
 
     if sensor.lower() == "anemometer":
+        
+        print(sensor)
         
         #testing wind data requires both wind speed and direction data, so
         #    both sensor's data must be read in if performing these tests
@@ -512,7 +516,38 @@ def temporal_test(sensor, df):
     #    like scanning for abnormally low variability
     
     
-
+    if "bmp" in sensor.lower():
+        print(sensor)
+        
+        #barring extreme weather phenomenon, temperature should not vary by
+        #    much in a 1-minute period
+        #could take the average/mean of the running 60-minute standard
+        #    deviation and use that as the maximum difference threshold, or
+        #    find the maximum standard deviations
+        
+    if "htu" in sensor.lower():
+        
+        #first find the running 1-hour standard deviation for temperature and
+        #    humidity
+        #NOTE: the column references here will not work if the limits test is
+        #    performed above because the flag columns are inserted to the
+        #    right of the column they refer to
+        T_limits = df.iloc[:,1].rolling(window=60).std(skipna=True).mean()
+        RH_limits = df.iloc[:,2].rolling(window=60).std(skipna=True).mean()
+        
+        #find every datum about which the consecutive forward-first
+        #    differences are of opposite sign
+        # use df.diff()
+        
+        #create the temperature and RH temporal consistency flag test column
+        #    and fill with zeros
+        df['t_TC'] = 0.
+        #flip zeros to 1s for any row such that the associated temperature is
+        #    greater than the prescribed temperature 3-standard-deviation
+        #    threshold
+        df.t_TC = df.t_TC[df.index[df.temp_C > 3*T_limits]] = 1
+    
+        
 
 
 ##############################################################################
@@ -566,10 +601,14 @@ def QA_main(directory, df):
     #    internal tests, and finally, climatological tests. Based on the tests,
     #    the sensor/variable combo in question will be flagged, and all other data
     #    will be dropped from the dataframe
-    #NOTE: the data returned may require manual inspection of the flagged data to
-    #      
+    #NOTE: the data returned may require manual inspection for erroneously
+    #    flagged data
     
-    
+    #consider having two levels of QA: one that is concerned only with the
+    #    sensor specified in 3D_main.py, thus, does not need the entire
+    #    station's dataset read in, and one that IS concerned with assuring
+    #    all the data; the later form can be considered a stricter form of
+    #    assurance
     
     
     
@@ -742,7 +781,7 @@ def QA_main(directory, df):
 
     df = limits_test(df)
     
-    df = IC_test(df)
+    # df = IC_test(df)
     
     df = temporal_test(df)
     

@@ -201,11 +201,11 @@ import plotter as pltr
 #    sensitive)
 #NOTE: if performing any Quality Assurance procedures, you must read in the
 #    data from ALL sensors. To do this, set the "QA" variable below to True,
-sensor = "bmp280"
+sensor = "htu21d"
 
 #set the 'directory' variable to the absolute path where your data are stored;
 #    don't forget the trailing forward slash!
-directory = "/Users/blund/Documents/3D-PAWS/Data/CSA_3DPAWS01/wx_stn/BMP280/"
+directory = "/Users/blund/Documents/3D-PAWS/Data/CSA_3DPAWS01/wx_stn/HTU21D/"
 
 #specify the FULL file path to the directory in which to save your figures;
 #    don't forget to include the trailing forward slash!
@@ -215,7 +215,7 @@ save_dir = "/Users/blund/Documents/3D-PAWS/_my_code/figures/si1145_testing/"
 #    specified above in 'directory', set 'wildcard' to "*"; you may specify
 #    this to select a subset of data (e.g. "*2020*" to only read in files from
 #    2020)
-wildcard = "bmp*"
+wildcard = "*"
 
 #change this to the name of the site from which data are being plotted; this
 #    will be used in the plot title as well as the name of the figure
